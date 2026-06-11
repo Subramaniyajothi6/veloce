@@ -1,26 +1,301 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================
+   VELOCE design tokens
+   ========================================================== */
+@theme {
+  --color-night: #0a0a0b;
+  --color-coal: #070708;
+  --color-panel: #101012;
+  --color-cream: #f2f1ec;
+  --color-ash: #8e8d86;
+  --color-veloce: #e10600;
+  --color-veloce-dark: #a30400;
+  --color-line: rgba(255, 255, 255, 0.09);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-anton), Impact, "Arial Narrow", sans-serif;
+  --font-body: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-grotesk), "Segoe UI", monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-hard: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-mq: mq 26s linear infinite;
+  --animate-dash: slideDash 2.2s var(--ease-in-out-hard) infinite;
+  --animate-rise: lRise 1s var(--ease-out-expo) 0.15s forwards;
+  --animate-kenburns: kenburns 2.8s var(--ease-out-expo) forwards;
+
+  @keyframes mq {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes slideDash {
+    50% { transform: translateX(0); }
+    100% { transform: translateX(102%); }
+  }
+  @keyframes lRise {
+    to { transform: none; }
+  }
+  @keyframes kenburns {
+    to { transform: scale(1.04); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Stacked layout variant: the showroom gallery (and friends) fall back to a
+   vertical stack on small screens OR when the user prefers reduced motion. */
+@custom-variant stacked {
+  @media (max-width: 860px), (prefers-reduced-motion: reduce) {
+    @slot;
+  }
+}
+
+@keyframes charIn {
+  to { transform: none; }
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: none; }
+}
+
+/* page transition (template.tsx re-mounts per navigation) */
+@keyframes wipeOut {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0); }
+}
+@keyframes pageRise {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: var(--color-veloce);
+  transform-origin: top;
+  pointer-events: none;
+  animation: wipeOut 0.6s var(--ease-in-out-hard) 0.05s both;
+}
+.page-enter {
+  animation: pageRise 0.7s var(--ease-out-expo) 0.15s both;
+}
+
+/* ==========================================================
+   Base
+   ========================================================== */
+@layer base {
+  html {
+    color-scheme: dark;
+    scrollbar-color: #3a3a3a #0a0a0b;
+    scrollbar-width: thin;
+  }
+  body {
+    @apply bg-night text-cream font-body antialiased;
+    line-height: 1.65;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-veloce);
+    color: #fff;
+  }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #0a0a0b; }
+  ::-webkit-scrollbar-thumb {
+    background: #2c2c2e;
+    border-radius: 99px;
+    border: 2px solid #0a0a0b;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-veloce); }
+  :focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.015em;
+  }
+  /* Custom cursor replaces the native one (capable pointers only) */
+  @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html.js body, html.js a, html.js button { cursor: none; }
+  }
+  /* JS-dependent chrome (preloader) must not render without JS */
+  html:not(.js) .js-only { display: none !important; }
+}
+
+/* ==========================================================
+   Custom component classes — only what Tailwind utilities
+   can't express: JS-toggled states, pseudo-element effects,
+   keyframe entrances and repeated design-system patterns.
+   ========================================================== */
+@layer components {
+  /* page gutter */
+  .wrap {
+    @apply mx-auto max-w-[1320px] px-[clamp(1.25rem,4.5vw,3rem)];
+  }
+
+  /* kicker line above headings */
+  .eyebrow {
+    @apply inline-flex items-center gap-[0.9rem] font-mono text-[0.72rem] font-semibold tracking-[0.32em] uppercase text-ash;
+  }
+  .eyebrow b { @apply text-veloce font-semibold; }
+  .eyebrow::after {
+    content: "";
+    @apply w-12 h-px bg-veloce;
+  }
+
+  /* section heading scale */
+  .h2 {
+    @apply text-[clamp(2.6rem,6.5vw,4.8rem)] mt-[1.2rem];
+  }
+
+  /* hollow display text (default 2px cream stroke) */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-cream);
+  }
+
+  /* section rhythm */
+  .sec { @apply py-[clamp(6rem,12vw,10rem)]; }
+  .sec-top {
+    @apply flex items-end justify-between gap-12 mb-[clamp(2.5rem,6vw,4.5rem)] max-[760px]:flex-col max-[760px]:items-start max-[760px]:gap-5;
+  }
+  .sec-top p { @apply max-w-[30rem] text-ash text-base; }
+
+  /* scroll-reveal (visible toggled by IntersectionObserver) */
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+    transition-delay: var(--d, 0s);
+  }
+  html.js .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* buttons */
+  .btn {
+    @apply relative inline-flex items-center gap-[0.7rem] px-[2.1rem] py-[1.05rem] rounded-[2px] font-mono text-[0.78rem] font-semibold tracking-[0.2em] uppercase overflow-hidden whitespace-nowrap;
+    transition: background 0.35s, color 0.35s, border-color 0.35s, transform 0.4s var(--ease-out-expo);
+  }
+  .btn-red { @apply bg-veloce text-white; }
+  .btn-red::before {
+    content: "";
+    @apply absolute inset-0 bg-white origin-bottom scale-y-0;
+    transition: transform 0.45s var(--ease-in-out-hard);
+  }
+  .btn-red:hover::before {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  .btn-red:hover { color: #0a0a0b; }
+  .btn-red span, .btn-red b { @apply relative z-[1]; }
+  .btn-ghost { @apply border border-white/[0.28] text-cream; }
+  .btn-ghost:hover { @apply border-white bg-white/5; }
+  .btn .arr { transition: transform 0.35s var(--ease-out-expo); }
+  .btn:hover .arr { transform: translateX(5px); }
+  .btn-sm { @apply px-[1.3rem] py-[0.68rem] text-[0.68rem]; }
+
+  /* hero headline characters (staggered rise after the preloader).
+     The hidden state applies as soon as JS is known to run; the animations
+     wait for html.loaded, which the Preloader sets the moment it lifts —
+     fixed delays would start at CSS parse and finish behind the overlay. */
+  html.js .hero-char {
+    display: inline-block;
+    transform: translateY(115%);
+  }
+  html.loaded .hero-char {
+    animation: charIn 1s var(--ease-out-expo) forwards;
+    animation-delay: calc(0.1s + var(--ci) * 0.042s);
+  }
+  .hero-char-dot {
+    color: var(--color-veloce);
+    -webkit-text-stroke: 0;
+  }
+  html.js .hero-fade {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  html.loaded .hero-fade {
+    animation: fadeUp 0.95s var(--ease-out-expo) 0.95s forwards;
+  }
+
+  /* manifesto word fill (on toggled by scroll progress) */
+  .mw {
+    color: rgba(242, 241, 236, 0.14);
+    transition: color 0.4s ease;
+  }
+  .mw.on { color: var(--color-cream); }
+  .mw.hot.on { color: var(--color-veloce); }
+
+  /* flagship image clip reveal (visible toggled by IntersectionObserver) */
+  html.js .f-img .clip {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 1.2s var(--ease-in-out-hard) 0.1s;
+  }
+  html.js .f-img.visible .clip {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* custom cursor (states toggled by pointer JS) */
+  .cursor-dot, .cursor-ring {
+    @apply fixed top-0 left-0 z-[8000] pointer-events-none rounded-full opacity-0;
+  }
+  .cursor-dot { @apply w-1.5 h-1.5 bg-veloce; }
+  .cursor-ring {
+    @apply w-[34px] h-[34px] border border-white/50 grid place-items-center;
+    transition: width 0.35s var(--ease-out-expo), height 0.35s var(--ease-out-expo), border-color 0.3s, background 0.3s;
+  }
+  .cursor-text {
+    @apply font-mono text-[9px] font-semibold tracking-[0.22em] text-white opacity-0 whitespace-nowrap;
+    transition: opacity 0.25s;
+  }
+  .cursor-ring.is-hover {
+    @apply w-[52px] h-[52px] border-veloce bg-[rgba(225,6,0,0.08)];
+  }
+  .cursor-ring.is-label {
+    @apply w-[74px] h-[74px] border-transparent bg-veloce;
+  }
+  .cursor-ring.is-label .cursor-text { @apply opacity-100; }
+
+  /* film grain overlay */
+  .noise {
+    @apply fixed inset-0 z-[6500] pointer-events-none opacity-5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+  }
+
+  /* archive floating preview (show/on toggled by pointer JS) */
+  .arc-preview {
+    @apply fixed top-0 left-0 z-[5500] w-[min(24vw,340px)] aspect-[4/3] pointer-events-none overflow-hidden opacity-0 will-change-transform;
+    transition: opacity 0.35s;
+  }
+  .arc-preview.show { @apply opacity-100; }
+  .arc-preview img {
+    @apply absolute inset-0 w-full h-full object-cover opacity-0;
+    transform: scale(1.18);
+    transition: opacity 0.4s var(--ease-out-expo), transform 1.1s var(--ease-out-expo);
+  }
+  .arc-preview img.on {
+    @apply opacity-100;
+    transform: scale(1);
+  }
+  @media (pointer: coarse) {
+    .arc-preview { display: none; }
+  }
+}
+
+/* ==========================================================
+   Reduced motion
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html.js .hero-char { transform: none; }
+  .hero-fade { opacity: 1 !important; transform: none !important; }
+  .mw { color: var(--color-cream); }
+  .mw.hot { color: var(--color-veloce); }
 }

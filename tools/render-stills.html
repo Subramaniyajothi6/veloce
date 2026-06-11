@@ -1,0 +1,149 @@
+<!doctype html>
+<!-- TEMPORARY render harness: generates catalog stills from the car GLBs.
+     Driven by scripts in the dev session; not linked from the site. -->
+<html>
+<head>
+<meta charset="utf-8" />
+<style>html,body{margin:0;background:#0a0a0b;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.184.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+
+const q = new URLSearchParams(location.search);
+const slug = q.get("m") || "furia";
+const paint = "#" + (q.get("paint") || "e10600");
+const repaint = q.get("repaint") === "1";
+const targets = (q.get("targets") || "").split(",").filter(Boolean);
+const angle = parseFloat(q.get("a") || "-0.55");
+const W = 1600, H = 1200;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(1);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color("#0a0a0b");
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+const key = new THREE.DirectionalLight(0xffffff, 2.4);
+key.position.set(6, 9, 4);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = key.shadow.camera.bottom = -8;
+key.shadow.camera.right = key.shadow.camera.top = 8;
+scene.add(key);
+const rim = new THREE.DirectionalLight(0x7f8cff, 1.0);
+rim.position.set(-7, 4, -6);
+scene.add(rim);
+const top = new THREE.SpotLight(0xffffff, 120, 0, 0.5, 1);
+top.position.set(0, 10, 0);
+scene.add(top);
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(80, 80),
+  new THREE.MeshStandardMaterial({ color: "#0b0b0c" })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+function geometryArea(geo) {
+  const pos = geo.getAttribute("position");
+  if (!pos) return 0;
+  const idx = geo.getIndex();
+  const count = idx ? idx.count : pos.count;
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+  let area = 0;
+  for (let i = 0; i + 2 < count; i += 3) {
+    a.fromBufferAttribute(pos, idx ? idx.getX(i) : i);
+    b.fromBufferAttribute(pos, idx ? idx.getX(i + 1) : i + 1);
+    c.fromBufferAttribute(pos, idx ? idx.getX(i + 2) : i + 2);
+    area += b.sub(a).cross(c.sub(a)).length() / 2;
+  }
+  return area;
+}
+
+const draco = new DRACOLoader().setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+const loader = new GLTFLoader().setDRACOLoader(draco);
+loader.load(`/models/${slug}.glb`, (gltf) => {
+  const c = gltf.scene;
+  const strays = [];
+  c.traverse((o) => { if (o.isLight || o.isCamera) strays.push(o); });
+  strays.forEach((o) => o.removeFromParent());
+  c.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+
+  if (repaint) {
+    const byMat = new Map();
+    c.traverse((o) => {
+      if (!o.isMesh) return;
+      const mat = Array.isArray(o.material) ? o.material[0] : o.material;
+      byMat.set(mat, (byMat.get(mat) ?? 0) + geometryArea(o.geometry));
+    });
+    const ranked = [...byMat.entries()].sort((x, y) => y[1] - x[1]);
+    const total = ranked.reduce((s, [, v]) => s + v, 0);
+    const isBlack = (m) => !m.color || Math.max(m.color.r, m.color.g, m.color.b) < 0.08;
+    const bodyMat =
+      ranked.find(([m, a]) => /body|paint|chasis|chassis|shell/i.test(m.name) && a / total > 0.05)?.[0] ??
+      ranked.find(([m]) => !isBlack(m))?.[0];
+    const isBody = (mat) => (targets.length ? targets.includes(mat.name) : mat === bodyMat);
+    const body = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color(paint),
+      metalness: 0.85,
+      roughness: 0.3,
+      clearcoat: 1,
+      clearcoatRoughness: 0.05,
+    });
+    c.traverse((o) => {
+      if (!o.isMesh) return;
+      const mat = Array.isArray(o.material) ? o.material[0] : o.material;
+      if (isBody(mat)) o.material = body;
+    });
+  }
+
+  function opaqueBox(root) {
+    const box = new THREE.Box3();
+    const tmp = new THREE.Box3();
+    root.updateMatrixWorld(true);
+    root.traverse((o) => {
+      if (!o.isMesh) return;
+      const mat = Array.isArray(o.material) ? o.material[0] : o.material;
+      if (mat && mat.transparent) return;
+      tmp.setFromObject(o);
+      box.union(tmp);
+    });
+    return box.isEmpty() ? box.setFromObject(root) : box;
+  }
+  c.rotation.y = parseFloat(q.get("yaw") || "0");
+  const box = opaqueBox(c);
+  const size = box.getSize(new THREE.Vector3());
+  c.scale.setScalar(4.4 / Math.max(size.x, size.z));
+  const box2 = opaqueBox(c);
+  const center = box2.getCenter(new THREE.Vector3());
+  c.position.set(-center.x, -box2.min.y, -center.z);
+  scene.add(c);
+
+  const R = 6.6, Hcam = 1.45;
+  camera.position.set(Math.sin(angle) * R, Hcam, Math.cos(angle) * R);
+  camera.lookAt(0, 0.52, 0);
+  renderer.render(scene, camera);
+  window.__done = true;
+}, undefined, (e) => { window.__error = String(e); });
+</script>
+</body>
+</html>

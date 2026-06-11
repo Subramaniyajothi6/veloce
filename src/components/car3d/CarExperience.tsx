@@ -1,0 +1,224 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { clamp, prefersReduced } from "@/lib/motion";
+import { onFrame } from "@/lib/raf";
+import type { CarProfile } from "@/types";
+import CarCanvas from "./CarCanvas";
+
+const formatSpec = (value: number, decimals?: number) =>
+  decimals ? value.toFixed(decimals) : value.toLocaleString("en-US");
+
+/** Codrops-style decode/scramble entrance for the car name. */
+function ScrambleTitle({ text }: { text: string }) {
+  const ref = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (prefersReduced()) return;
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const totalFrames = Math.max(24, text.length * 4);
+    let frame = 0;
+    let raf = 0;
+    const tick = () => {
+      frame++;
+      const resolved = Math.floor((frame / totalFrames) * text.length);
+      let out = "";
+      for (let i = 0; i < text.length; i++) {
+        out +=
+          i < resolved
+            ? text[i]
+            : text[i] === " "
+              ? " "
+              : charset[Math.floor(Math.random() * charset.length)];
+      }
+      el.textContent = out;
+      if (frame < totalFrames) raf = requestAnimationFrame(tick);
+      else el.textContent = text;
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      el.textContent = text;
+    };
+  }, [text]);
+  return (
+    <h1
+      ref={ref}
+      className="font-display uppercase leading-[0.95] text-[clamp(3.4rem,12vw,10rem)]"
+    >
+      {text}
+    </h1>
+  );
+}
+
+export default function CarExperience({ car }: { car: CarProfile }) {
+  const stages = car.specs.length + 2; // intro + one per spec + outro
+  const sectionRef = useRef<HTMLElement>(null);
+  const railRef = useRef<HTMLElement>(null);
+  const progressRef = useRef(0);
+  const [stage, setStage] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setReduced(prefersReduced());
+  }, []);
+
+  useEffect(() => {
+    if (reduced) return;
+    const section = sectionRef.current;
+    if (!section) return;
+    let last = -1;
+    return onFrame(() => {
+      const span = section.offsetHeight - window.innerHeight;
+      if (span <= 0) return;
+      const r = section.getBoundingClientRect();
+      const p = clamp(-r.top / span, 0, 1);
+      progressRef.current = p;
+      if (railRef.current)
+        railRef.current.style.transform = `scaleY(${p})`;
+      const s = Math.min(stages - 1, Math.floor(p * stages));
+      if (s !== last) {
+        last = s;
+        setStage(s);
+      }
+    });
+  }, [stages, reduced]);
+
+  const outro = stage === stages - 1;
+
+  return (
+    <section
+      ref={sectionRef}
+      className={`relative ${reduced ? "" : "h-[480vh]"}`}
+    >
+      <div className="sticky top-0 h-svh overflow-hidden bg-night">
+        {mounted && (
+          <CarCanvas
+            paint={car.paint}
+            model={car.model}
+            progressRef={progressRef}
+            staticView={reduced}
+          />
+        )}
+
+        {/* intro */}
+        <div
+          className={`absolute inset-0 z-[3] flex flex-col items-center justify-between text-center px-6 pt-[clamp(6rem,14vh,9rem)] pb-[clamp(2rem,6vh,4rem)] pointer-events-none transition-[opacity,translate] duration-700 ease-out-expo ${
+            stage === 0 || reduced
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-6"
+          }`}
+        >
+          <div>
+            <span className="eyebrow justify-center">
+              <b>{car.category}</b>
+            </span>
+            <div className="mt-4">
+              <ScrambleTitle text={car.name} />
+            </div>
+            <p className="font-mono text-[0.78rem] tracking-[0.26em] uppercase text-ash mt-5">
+              {car.tagline}
+            </p>
+          </div>
+          {!reduced && (
+            <span className="font-mono text-[0.66rem] tracking-[0.3em] uppercase text-ash animate-pulse">
+              Scroll to walk around the car
+            </span>
+          )}
+        </div>
+
+        {/* spec stages */}
+        {!reduced &&
+          car.specs.map((s, i) => (
+            <div
+              key={s.label}
+              className={`absolute top-1/2 -translate-y-1/2 z-[3] pointer-events-none ${
+                i % 2 ? "right-[clamp(1.5rem,7vw,6rem)] text-right" : "left-[clamp(1.5rem,7vw,6rem)]"
+              }`}
+              aria-hidden={stage !== i + 1}
+            >
+              <div
+                className={`transition-[opacity,translate] duration-700 ease-out-expo ${
+                  stage === i + 1
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-8"
+                }`}
+              >
+                <span className="font-mono text-[0.66rem] tracking-[0.3em] uppercase text-ash">
+                  {`0${i + 1} / 0${car.specs.length}`}
+                </span>
+                <div className="font-mono font-semibold leading-none tabular-nums text-[clamp(3.2rem,8vw,6.5rem)] mt-3">
+                  {formatSpec(s.value, s.decimals)}
+                  <small className="text-[0.4em] text-veloce font-semibold ml-2 align-baseline">
+                    {s.unit}
+                  </small>
+                </div>
+                <div
+                  className={`h-px w-24 bg-veloce mt-5 ${i % 2 ? "ml-auto" : ""}`}
+                />
+                <div className="font-mono text-[0.72rem] tracking-[0.26em] uppercase text-cream mt-4">
+                  {s.label}
+                </div>
+              </div>
+            </div>
+          ))}
+
+        {/* outro / CTA */}
+        <div
+          className={`absolute inset-x-0 bottom-0 z-[3] flex flex-col items-center text-center gap-6 pb-[clamp(2.5rem,8vh,5rem)] px-6 transition-[opacity,translate] duration-700 ease-out-expo ${
+            outro || reduced
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 translate-y-8 pointer-events-none"
+          }`}
+        >
+          {reduced && (
+            <div className="grid grid-cols-4 gap-6 max-[700px]:grid-cols-2 mb-2">
+              {car.specs.map((s) => (
+                <div key={s.label} className="text-center">
+                  <div className="font-mono font-semibold tabular-nums text-[1.6rem]">
+                    {formatSpec(s.value, s.decimals)}
+                    <small className="text-[0.55em] text-veloce ml-1">{s.unit}</small>
+                  </div>
+                  <div className="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ash mt-1">
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <span className="font-mono text-[0.85rem] tracking-[0.14em] text-ash">
+            FROM <b className="text-cream font-semibold">{car.price}</b>
+          </span>
+          <div className="flex gap-[1.1rem] justify-center flex-wrap">
+            <a
+              className="btn btn-red magnetic"
+              href={`mailto:drive@veloce.motors?subject=Test drive — ${car.name}`}
+            >
+              <span>Book this car</span> <b className="arr">→</b>
+            </a>
+            <Link className="btn btn-ghost magnetic" href="/models">
+              <span>Back to the range</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* progress rail */}
+        {!reduced && (
+          <div
+            className="absolute right-[1.4rem] top-1/2 -translate-y-1/2 z-[3] h-[34vh] w-px bg-white/15"
+            aria-hidden="true"
+          >
+            <i
+              ref={railRef}
+              className="absolute inset-0 bg-veloce origin-top [transform:scaleY(0)] not-italic"
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
