@@ -1,0 +1,30 @@
+﻿royale-1.jpg | 2024 Bugatti Bolide 2.jpg | Calreyn88 | CC BY-SA 4.0
+royale-2.jpg | 2024 Bugatti Bolide 4.jpg | Calreyn88 | CC BY-SA 4.0
+royale-3.jpg | 2024 Bugatti Bolide 5.jpg | Calreyn88 | CC BY-SA 4.0
+furia-1.jpg | Ferrari 599 GTO, Pau 2015.jpg | Handelsgeselschaft | CC BY-SA 4.0
+furia-2.jpg | Ferrari 599 GTO, Pau 2015 (3).jpg | Handelsgeselschaft | CC BY-SA 4.0
+furia-3.jpg | Rosso Corsa (Red) Ferrari 599 GTO (8741179095).jpg | Axion23 | CC BY 2.0
+vento-rs-1.jpg | FOS21 Ford GT40 60.jpg | MrWalkr | CC BY-SA 4.0
+vento-rs-2.jpg | 1968 Ford GT40 HCC23.jpg | MrWalkr | CC BY-SA 4.0
+vento-rs-3.jpg | Ford GT40 (1966) Solitude Revival 2022 1X7A0005.jpg | Alexander Migl | CC BY-SA 4.0
+tempesta-v12-1.jpg | Orange tuned Toyota Supra.jpg | Robin Corps from Crowthorne, England | CC BY-SA 2.0
+tempesta-v12-2.jpg | Toyota Supra (A80) ver.the Fast and the Furious.jpg | Tokumeigakarinoaoshima | CC BY-SA 4.0
+tempesta-v12-3.jpg | Toyota Supra 1994 - Mondial de l'Automobile de Paris 2016 - 001.jpg | Thesupermat | CC BY-SA 4.0
+giallo-gt-1.jpg | BMW M8 3.jpg | Calreyn88 | CC BY-SA 4.0
+giallo-gt-2.jpg | BMW M8 Gran Coupe, front.jpg | Ghostofakina | CC BY-SA 4.0
+giallo-gt-3.jpg | BMW M8 Gran Coupe Competition (Facelift) 1X7A6106.jpg | Alexander Migl | CC BY-SA 4.0
+notte-v10-1.jpg | 2018 Dodge Challenger RT Shaker in Indigo Blue, Front Right, 08-01-2022.jpg | Elise240SX | CC BY-SA 4.0
+notte-v10-2.jpg | 2018 Dodge Challenger RT Shaker in Indigo Blue, Rear Right, 08-01-2022.jpg | Elise240SX | CC BY-SA 4.0
+notte-v10-3.jpg | 2015 Dodge Challenger SRT 392 Jazz Blue Pearl.jpg | User:McChizzle | Public domain
+volt-zero-1.jpg | Tesla roadster 2020 prototype.jpg | Smnt | CC BY-SA 4.0
+volt-zero-2.jpg | The Wicked-Fast Next Gen Roadster.jpg | Steve Jurvetson | CC BY 2.0
+volt-zero-3.jpg | Roadster-2020-shareholder-meeting.jpg | Editor928 | CC BY-SA 4.0
+m8-first.jpg | 2020 BMW M8 Gran Coupe Competition First Edition Auto.jpg | Calreyn88 | CC BY-SA 4.0
+m850-a.jpg | BMW M850i Coupe IMG 0801.jpg | Alexander Migl | CC BY-SA 4.0
+m8-whip.jpg | 2022-0426-MyWhip-2022 BMW M8 Competition Gran Coupe.jpg | Bobak Ha'Eri | CC BY 3.0
+gt40-p1.jpg | 1967 Ford GT40 Mark III Petersen Automotive Museum.jpg | TaurusEmerald | CC BY-SA 4.0
+gt40-mk4.jpg | Ford GT40 MKIV side.jpg | Peter & Laila | CC BY 2.0
+supra-rad.jpg | Radwood LA 2018 and Petersen Museum (32322678648).jpg | zombieite | CC BY 2.0
+chal-vapor.jpg | Dodge Challenger 'Vapor' 090611-F-1419D-004.jpg | Master Sgt. Scott Reed, USAF | Public domain
+chal-vapor2.jpg | Dodge Challenger 'Vapor' 090611-F-1419D-005.jpg | Master Sgt. Scott Reed, USAF | Public domain
+All public/cars/*.jpg are graded (darken/desaturate/vignette) via tools/grade-photos.mjs.

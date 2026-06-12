@@ -89,11 +89,14 @@ export default function CarExperience({ car }: { car: CarProfile }) {
   }, [stages, reduced]);
 
   const outro = stage === stages - 1;
+  /* letterboxed while a spec shot is framed */
+  const cine = !reduced && stage >= 1 && !outro;
 
   return (
     <section
       ref={sectionRef}
-      className={`relative ${reduced ? "" : "h-[480vh]"}`}
+      className="relative"
+      style={reduced ? undefined : { height: `${stages * 85}vh` }}
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-night">
         {mounted && (
@@ -101,8 +104,41 @@ export default function CarExperience({ car }: { car: CarProfile }) {
             paint={car.paint}
             model={car.model}
             progressRef={progressRef}
+            stages={stages}
             staticView={reduced}
           />
+        )}
+
+        {/* cinema vignette */}
+        <div
+          className="absolute inset-0 z-[1] pointer-events-none bg-[radial-gradient(120%_85%_at_50%_45%,transparent_55%,rgba(7,7,8,0.6)_100%)]"
+          aria-hidden="true"
+        />
+
+        {/* letterbox bars + shot HUD */}
+        {!reduced && (
+          <>
+            <div
+              className={`absolute top-0 inset-x-0 z-[2] h-[clamp(2.6rem,6.5vh,4.2rem)] bg-black transition-[translate] duration-700 ease-out-expo ${
+                cine ? "translate-y-0" : "-translate-y-full"
+              }`}
+              aria-hidden="true"
+            />
+            <div
+              className={`absolute bottom-0 inset-x-0 z-[2] h-[clamp(2.6rem,6.5vh,4.2rem)] bg-black flex items-center justify-between gap-6 px-[clamp(1.25rem,5vw,4rem)] transition-[translate] duration-700 ease-out-expo ${
+                cine ? "translate-y-0" : "translate-y-full"
+              }`}
+              aria-hidden="true"
+            >
+              <span className="font-mono text-[0.62rem] tracking-[0.3em] uppercase text-ash tabular-nums whitespace-nowrap overflow-hidden text-ellipsis">
+                {cine &&
+                  `Shot 0${stage} / 0${car.specs.length} — ${car.specs[stage - 1].label}`}
+              </span>
+              <span className="font-mono text-[0.62rem] tracking-[0.3em] uppercase text-ash whitespace-nowrap max-[600px]:hidden">
+                {car.name} · Veloce Motors
+              </span>
+            </div>
+          </>
         )}
 
         {/* intro */}
@@ -142,10 +178,10 @@ export default function CarExperience({ car }: { car: CarProfile }) {
               aria-hidden={stage !== i + 1}
             >
               <div
-                className={`transition-[opacity,translate] duration-700 ease-out-expo ${
+                className={`transition-[opacity,translate,filter] duration-700 ease-out-expo ${
                   stage === i + 1
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-8"
+                    ? "opacity-100 translate-y-0 [filter:blur(0px)]"
+                    : "opacity-0 translate-y-8 [filter:blur(10px)]"
                 }`}
               >
                 <span className="font-mono text-[0.66rem] tracking-[0.3em] uppercase text-ash">
@@ -163,6 +199,15 @@ export default function CarExperience({ car }: { car: CarProfile }) {
                 <div className="font-mono text-[0.72rem] tracking-[0.26em] uppercase text-cream mt-4">
                   {s.label}
                 </div>
+                {s.detail && (
+                  <p
+                    className={`text-ash text-[0.92rem] leading-relaxed mt-3 max-w-[20rem] ${
+                      i % 2 ? "ml-auto" : ""
+                    }`}
+                  >
+                    {s.detail}
+                  </p>
+                )}
               </div>
             </div>
           ))}
@@ -176,7 +221,7 @@ export default function CarExperience({ car }: { car: CarProfile }) {
           }`}
         >
           {reduced && (
-            <div className="grid grid-cols-4 gap-6 max-[700px]:grid-cols-2 mb-2">
+            <div className="grid grid-cols-3 gap-6 max-[700px]:grid-cols-2 mb-2">
               {car.specs.map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="font-mono font-semibold tabular-nums text-[1.6rem]">
@@ -194,12 +239,12 @@ export default function CarExperience({ car }: { car: CarProfile }) {
             FROM <b className="text-cream font-semibold">{car.price}</b>
           </span>
           <div className="flex gap-[1.1rem] justify-center flex-wrap">
-            <a
+            <Link
               className="btn btn-red magnetic"
-              href={`mailto:drive@veloce.motors?subject=Test drive — ${car.name}`}
+              href={`/test-drive?car=${car.slug}`}
             >
               <span>Book this car</span> <b className="arr">→</b>
-            </a>
+            </Link>
             <Link className="btn btn-ghost magnetic" href="/models">
               <span>Back to the range</span>
             </Link>

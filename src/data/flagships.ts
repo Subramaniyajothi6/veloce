@@ -8,7 +8,7 @@ export const flagships: Flagship[] = [
     name: "Notte V10",
     lede: "Twilight is its natural habitat. A naturally-aspirated V10 grand tourer tuned for the last golden hour of the day — and the first one of the morning.",
     image: "/cars/notte-v10.jpg",
-    alt: "Midnight-blue Veloce Notte V10 brooding in the dark studio",
+    alt: "Matte-black Veloce Notte V10 against desert mountains at dusk",
     specs: [
       { value: 620, unit: "HP", label: "Power" },
       { value: 3.1, decimals: 1, unit: "S", label: "0–100 km/h" },
@@ -24,7 +24,7 @@ export const flagships: Flagship[] = [
     name: "Volt Zero",
     lede: "Silence, weaponized. Our first all-electric flagship pins you to the seat at a whisper — and out-drags everything with a fuel cap.",
     image: "/cars/volt-zero.jpg",
-    alt: "Silver Veloce Volt Zero electric concept in the night studio",
+    alt: "Silver Veloce Volt Zero at its night unveiling",
     badge: "100% Electric",
     specs: [
       { value: 1020, unit: "HP", label: "Power" },

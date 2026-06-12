@@ -1,3 +1,4 @@
+
 # VELOCE Motors — Project Handoff
 
 > Context document for continuing work in a new chat. Everything below is already
@@ -40,10 +41,25 @@ Run: `npm run dev` (localhost:3000) · Build: `npm run build` (passes clean, all
   + quote) → Archive (hover list w/ cursor-trailing image preview) → Visit (CTA).
 - `/models` — "The Range" grid of all 7 cars.
 - `/models/[slug]` — SSG detail pages (royale, furia, vento-rs, tempesta-v12,
-  giallo-gt, notte-v10, volt-zero): **3D scroll experience** (480vh pinned
-  section; R3F camera orbits the car as you scroll; specs appear stage by
-  stage; scramble title; price/CTA outro) → story section → "Next in the
-  range" strip. **Next 16 note: `params` is a `Promise` — must `await`.**
+  giallo-gt, notte-v10, volt-zero): **cinematic 3D scroll experience**
+  (pinned section, height = stages × 85vh where stages = specs.length + 2;
+  R3F camera cuts between keyframed "shots" — low front hero, long-lens
+  close-up, side profile, rear 3/4, overhead crane, tight nose — each with a
+  slow dolly + fov lens change + handheld drift; 6 specs per car appear shot
+  by shot with a one-line `detail` caption; letterbox bars + bottom shot HUD
+  during spec stages; scramble title; price/CTA outro) → story section →
+  **full spec sheet** (numbered rows, value + `detail`) → **photo gallery**
+  (`car.gallery`, real Commons photos) → **track band** (`car.track`,
+  fictional timing-tower stats) → "Next in the range" strip. **Next 16 note:
+  `params` is a `Promise` — must `await`.**
+- `/test-drive` (dynamic, `?car=<slug>` preselects) — booking form:
+  `BookingForm.tsx` (client, `useActionState`) → server action
+  `app/test-drive/actions.ts` (validates, appends NDJSON to
+  `data/bookings.json` — gitignored; the seam Phase B's MongoDB replaces).
+  **Gotcha: "use server" files may only export async functions** — the
+  initial state object lives in BookingForm, only the type is shared.
+  All "Book a test drive" CTAs (Nav, Visit, car outro, detail page) point
+  here; no more `mailto:`.
 
 ## File map (src/)
 
@@ -72,9 +88,15 @@ components/
                           /body|paint|chasis|shell/ at ≥5% surface area, else
                           largest non-black material by triangle area; glass
                           by name or opacity<1; other materials kept),
-                          Rig (camera orbit from progressRef)
-  car3d/CarExperience.tsx scrolly wrapper: stage state, spec overlays, scramble
-                          title, progress rail, reduced-motion static fallback
+                          Rig (keyframed cinematic shots from progressRef:
+                          buildShots() = intro push-in + SHOT_STYLES cycle +
+                          outro pull-back; smootherstep in-shot motion, lerp
+                          smoothing turns stage jumps into swish cuts,
+                          fov lerp + handheld drift; takes `stages` prop)
+  car3d/CarExperience.tsx scrolly wrapper: stage state, spec overlays (blur-in,
+                          `detail` captions), letterbox bars + shot HUD,
+                          vignette, scramble title, progress rail,
+                          reduced-motion static fallback (3-col spec grid)
 hooks/   useReveal, useCounters, useParallax, useManifestoFill,
          useHorizontalScroll, useMagnetic, useSmoothScroll, useMarqueeSkew,
          useArchivePreview  (all query the DOM like the original site did;
@@ -86,10 +108,32 @@ data/    cars.ts (CarProfile[] — single source for /models pages, incl. `paint
          hex for 3D body color), showroom.ts, flagships.ts, archive.ts,
          services.ts, stats.ts, locations.ts
 types.ts CarProfile, CarSpec, ShowroomCar, Flagship, ArchiveSale, etc.
-public/models/  one GLB per car slug (royale.glb … volt-zero.glb), currently
-                low-poly CC-BY placeholders from poly.pizza (credits in
-                cars.ts `model.credit`); car.glb is the old shared Ferrari
-                (unused, kept until realistic models land)
+public/models/  one GLB per car slug (royale.glb … volt-zero.glb); credits in
+                cars.ts `model.credit`. furia.glb was re-optimized
+                (gltf-transform: draco + 512px webp textures, **--palette
+                false** — palette merges materials and breaks the body
+                repaint heuristic). CarCanvas also strips
+                KHR_materials_transmission at load (forces an extra
+                full-scene render pass per frame = scroll stutter) and swaps
+                it for cheap transparent glass.
+public/cars/    real photography from Wikimedia Commons (CC BY / CC BY-SA /
+                PD): <slug>.jpg hero + <slug>-2/-3.jpg gallery. Attribution
+                per file in downloads/photos/credits.txt. Thumbnails
+                everywhere use these photos; 3D appears ONLY in the
+                /models/[slug] scroll experience. ALL files carry a uniform
+                cinematic grade (darken/desaturate/contrast/vignette) baked
+                in by tools/grade-photos.mjs (sharp; maps downloads/photos
+                sources → public/cars, so re-running is idempotent — edit
+                the MAP there to change a photo). Heroes were picked for
+                dark/moody settings (Petersen Museum GT40 + Supra, USAF
+                "Vapor" Challenger at dusk, night unveilings).
+                **Gotcha: `.next/cache/images` survives rebuilds — after
+                replacing files in public/, delete it or the optimizer
+                serves stale variants.**
+tools/          verify.mjs (Playwright e2e: images, vault-card click, form,
+                sections), perf-probe.mjs (headed GPU scroll-fps probe),
+                shots.mjs (screenshots). Run against `npx next start -p 3100`
+                with $env:BASE. playwright is a devDependency.
 ```
 
 ## Conventions & gotchas (IMPORTANT for any new work)
@@ -139,16 +183,27 @@ public/models/  one GLB per car slug (royale.glb … volt-zero.glb), currently
     progress lives in a mutable ref (no React state per frame); only the stage
     index is state. Canvas renders after `mounted` state to dodge SSR.
 
-## PENDING — swap placeholder 3D models for realistic Sketchfab ones
+## DONE 2026-06-12 — realistic Sketchfab models swapped in
 
-User wants realistic per-car models (placeholders are low-poly). User was given
-7 Sketchfab links (CC-BY: La Voiture Noire, SF90 XX, 911 GT3, Centenario,
-DB11, Audi R8, Tesla Roadster) and instructions to download glTF zips named
-`<slug>.zip` into `D:\New website\veloce\downloads`. When they land: unzip,
-convert/optimize to GLB (draco + texture resize via `npx @gltf-transform/cli`),
-replace files in public/models/, tune per-car `yaw`, update `model.credit`,
-and consider skipping the body repaint for textured realistic models (maybe a
-`repaint: false` flag). Then delete unused public/models/car.glb.
+All 7 cars now use realistic models (all **CC-BY-4.0**, per-car credit lines
+in `cars.ts`; sources + zips in `downloads/`, see `downloads/MODELS.md`):
+La Voiture Noire (royale), SF90 XX (furia), 911 GT3 (vento-rs), DB11
+(tempesta-v12, Hari's — the Black Snow one was downloaded too but unused),
+Centenario (giallo-gt), Audi R8 (notte-v10), Tesla Roadster (volt-zero).
+Pipeline: `npx @gltf-transform/cli optimize scene.gltf out.glb --compress
+draco --texture-compress webp --texture-size 1024 --palette false`
+(all GLBs ≤1.9 MB). Visual QA via `node tools/yaw-check.mjs [slugs…]`
+(screenshots hero+mid per car against a running dev server, $env:BASE);
+`tools/mat-rank.mjs <scene.gltf>` ranks materials by tris to find body
+materials; `tools/glb-probe.mjs </models/x.glb>` prints per-mesh bboxes
+in a real browser (draco-capable).
+
+Per-car overrides that the heuristics could NOT infer (all in cars.ts):
+`yaw: Math.PI` royale + tempesta-v12 (models nose −Z); explicit
+`bodyMaterials` for royale (`lavoiturecsr2_coloured…` — authored black, the
+non-black heuristic skips it), tempesta-v12 (`Body_Color` — "Painted_Black"
+trim outranks it AND matches /paint/), giallo-gt (`Carbon_R` + `Material` —
+authored carbon+orange), notte-v10 (`Car_Paint`, `Car_Paint.001`).
 
 ## PENDING — Phase B (user explicitly wants this)
 
@@ -158,7 +213,9 @@ Approved plan exists (originally at
 1. **MongoDB Atlas + Mongoose**: `Car` collection seeded from `src/data/cars.ts`;
    cached connection helper `src/lib/db.ts`; swap data imports for DB queries
    in server components (the data files are the designed seam).
-2. **Test-drive booking**: replace `mailto:` CTAs with a form → server action →
+2. **Test-drive booking**: ~~replace `mailto:` CTAs with a form~~ DONE as a
+   local form (see `/test-drive` above) — Phase B swaps the
+   `data/bookings.json` append in `app/test-drive/actions.ts` for a
    `Booking` collection (+ optional email via Resend).
 3. **Admin**: `/admin` route group, Auth.js, CRUD for cars.
 
@@ -170,9 +227,62 @@ ghost headings · drag-to-explore gallery · infinite WebGL carousel for Archive
 
 ## Verification checklist (after any change)
 
-1. `npm run build` — must pass with 0 TS errors, 12+ routes.
-2. `npm run dev` → check `/`, `/models`, `/models/furia` (3D loads, scroll
-   stages work, page wipe plays on navigation).
-3. Test reduced-motion (DevTools rendering emulation) and touch emulation —
+1. `npm run build` — must pass with 0 TS errors, 13+ routes.
+2. `npm run dev` → check `/`, `/models`, `/models/furia` (3D loads, cinematic
+   shots + letterbox work, page wipe plays on navigation), `/test-drive`
+   (submit writes to `data/bookings.json`, invalid input shows field errors).
+3. Automated: `npx next start -p 3100` then
+   `$env:BASE="http://localhost:3100"; node tools/verify.mjs` (Playwright
+   e2e). For 3D frame-rate use `node tools/perf-probe.mjs <slugs>` — it runs
+   HEADED because headless WebGL is software-rendered and useless for perf.
+4. Test reduced-motion (DevTools rendering emulation) and touch emulation —
    everything must degrade (stacked showroom, static 3D view, no cursor).
-4. No hydration warnings in browser console.
+5. No hydration warnings in browser console.
+
+## Session log — 2026-06-12 (all verified, build green)
+
+- **Cinematic 3D scroll** on `/models/[slug]` (keyframed shots, letterbox,
+  shot HUD, 6 specs each with `detail` captions).
+- **Real photography everywhere** (3D only in the scroll experience), with a
+  baked-in dark cinematic grade — see public/cars/ note above. To swap a
+  photo: put the source in downloads/photos, edit MAP in
+  tools/grade-photos.mjs, re-run it, delete `.next/cache/images`.
+- **/test-drive booking flow** (all CTAs route there; `?car=` preselects).
+- **Detail pages**: spec sheet → gallery → track band after the 3D section.
+- **Furia stutter fixed**: GLB 6.2→2.7 MB; transmission glass neutralized in
+  CarCanvas for all cars (it forced an extra full-scene render pass/frame).
+- **"+27 in the vault" card**: verified clickable + navigates via Playwright;
+  most likely the earlier jank made clicks feel dead.
+- **Realistic 3D models swapped in** (second session same day) — see the
+  "DONE 2026-06-12" section above. verify.mjs fixed along the way: the
+  royale.jpg selector now matches next/image's encoded src, the scroll-perf
+  check SKIPs under software WebGL, and the suite waits for the preloader to
+  lift before clicking (was a flaky race).
+
+### Trap list from this session (don't relearn these)
+
+1. `"use server"` files may only export **async functions** — exporting a
+   const object silently hands the client a broken action proxy.
+2. `gltf-transform optimize` defaults include `palette` which merges/renames
+   materials → kills the body-repaint heuristic. Always `--palette false`.
+3. `.next/cache/images` survives rebuilds → stale photos after replacing
+   files in public/. Delete it.
+4. PowerShell 5.1 `Get-Content`/`Set-Content` mojibakes UTF-8 (€ → â‚¬) —
+   edit source files with proper tooling only.
+5. Don't kill the Turbopack dev server's processes while sharing its `.next`
+   (build daemon corrupts; fix = stop all project node processes, delete
+   `.next`, rebuild).
+6. `gltf-transform optimize`'s default `join`/`flatten` CORRUPTS models with
+   animated nodes (giallo's wheels merged into a 3.5-unit-tall blob and broke
+   grounding). Fix: add `--flatten false --join false` for that model.
+7. The body-repaint heuristic fails two ways on found models: authored-BLACK
+   bodies are skipped by the non-black rule (royale, giallo), and big trim
+   materials named like "Painted_Black" win the /paint/ name match
+   (tempesta). Fix = explicit `bodyMaterials` in cars.ts; find the right
+   names with `tools/mat-rank.mjs`.
+8. CarCanvas `opaqueBox` filters out meshes under 0.2% of total surface area —
+   scattered micro-geometry (stray badges at y=−0.51 in giallo) must not set
+   the ground line. Don't "simplify" that filter away.
+9. Next 16 allows only ONE `next dev` per project (lockfile). If a dev server
+   is already running (often the user's, port 3000), point tools at it via
+   $env:BASE instead of starting another.

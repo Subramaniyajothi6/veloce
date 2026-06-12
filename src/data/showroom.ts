@@ -8,7 +8,7 @@ export const showroomCars: ShowroomCar[] = [
     specHp: "1,500 HP",
     specRest: "2.4 S / 420 KM/H",
     image: "/cars/royale.jpg",
-    alt: "Veloce Royale hypercar in its bespoke green-over-carbon livery",
+    alt: "Veloce Royale hypercar in ice-blue over exposed carbon",
   },
   {
     slug: "furia",
@@ -17,7 +17,7 @@ export const showroomCars: ShowroomCar[] = [
     specHp: "963 HP",
     specRest: "2.6 S / 350 KM/H",
     image: "/cars/furia.jpg",
-    alt: "White-and-red Veloce Furia hybrid hypercar in the night studio",
+    alt: "Rosso-red Veloce Furia rear three-quarter outside the atelier",
   },
   {
     slug: "vento-rs",
@@ -26,7 +26,7 @@ export const showroomCars: ShowroomCar[] = [
     specHp: "720 HP",
     specRest: "2.8 S / 341 KM/H",
     image: "/cars/vento-rs.jpg",
-    alt: "Silver Veloce Vento RS low-slung racer in the night studio",
+    alt: "Silver Veloce Vento RS low-slung under the museum lights",
   },
   {
     slug: "tempesta-v12",
@@ -35,7 +35,7 @@ export const showroomCars: ShowroomCar[] = [
     specHp: "770 HP",
     specRest: "2.9 S / 355 KM/H",
     image: "/cars/tempesta-v12.jpg",
-    alt: "Orange Veloce Tempesta V12 coupé in the night studio",
+    alt: "White Veloce Tempesta V12 in the dark museum vault",
   },
   {
     slug: "giallo-gt",
@@ -44,6 +44,6 @@ export const showroomCars: ShowroomCar[] = [
     specHp: "585 HP",
     specRest: "3.7 S / 318 KM/H",
     image: "/cars/giallo-gt.jpg",
-    alt: "Yellow Veloce Giallo GT grand tourer in the night studio",
+    alt: "Veloce Giallo GT in racing green over gold wheels",
   },
 ];

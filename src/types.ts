@@ -26,6 +26,8 @@ export interface CarSpec {
   decimals?: number;
   unit: string;
   label: string;
+  /** One-line caption shown under the label in the cinematic scroll. */
+  detail?: string;
 }
 
 /** Per-car 3D asset for the scroll experience. */
@@ -43,6 +45,20 @@ export interface CarModel3D {
   credit: string;
 }
 
+/** Photo in a car's detail-page gallery. */
+export interface CarPhoto {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+/** Fictional track figure shown in the "On the track" band. */
+export interface TrackStat {
+  label: string;
+  value: string;
+  note: string;
+}
+
 /** Full car profile backing /models and /models/[slug]. */
 export interface CarProfile {
   slug: string;
@@ -57,6 +73,10 @@ export interface CarProfile {
   paint: string;
   model: CarModel3D;
   specs: CarSpec[];
+  /** Extra photography for the detail page (hero image not included). */
+  gallery: CarPhoto[];
+  /** Track numbers for the detail page. */
+  track: TrackStat[];
 }
 
 /** Flagship spotlight (alternating image/copy article). */

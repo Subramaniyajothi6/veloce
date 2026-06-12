@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test-drive bookings (local demo storage)
+/data
+
+# 3D model source archives — provenance + re-download links in downloads/MODELS.md;
+# the optimized GLBs the site uses live in public/models/
+/downloads/*.zip
+/downloads/extracted/
+/downloads/optimized/
+
+# debug screenshots from tools/yaw-check.mjs etc.
+/tools/*.png
+

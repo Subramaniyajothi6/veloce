@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { locations } from "@/data/locations";
 
 export default function Visit() {
@@ -35,9 +36,9 @@ export default function Visit() {
             showroom, pick a key — we&apos;ll handle the rest.
           </p>
           <div className="flex gap-[1.1rem] justify-center flex-wrap mt-[2.8rem]">
-            <a className="btn btn-red magnetic" href="mailto:drive@veloce.motors">
+            <Link className="btn btn-red magnetic" href="/test-drive">
               <span>Book a test drive</span> <b className="arr">→</b>
-            </a>
+            </Link>
             <a className="btn btn-ghost magnetic" href="tel:+498921200">
               <span>+49 89 2120 0</span>
             </a>

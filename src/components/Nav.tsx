@@ -72,7 +72,7 @@ export default function Nav() {
           </nav>
           <Link
             className="btn btn-red btn-sm magnetic max-[860px]:hidden"
-            href="/#visit"
+            href="/test-drive"
           >
             <span>Book a test drive</span>
           </Link>
