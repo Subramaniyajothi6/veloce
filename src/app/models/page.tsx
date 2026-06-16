@@ -7,7 +7,7 @@ import { cars } from "@/data/cars";
 export const metadata: Metadata = {
   title: "The Range — VELOCE Motors",
   description:
-    "Seven machines, one obsession. Explore every model in the VELOCE range in 3D.",
+    "Ten machines, one obsession. Explore every model in the VELOCE range in 3D.",
 };
 
 export default function ModelsPage() {
@@ -17,10 +17,10 @@ export default function ModelsPage() {
         <div className="sec-top reveal">
           <div>
             <span className="eyebrow">
-              <b>{`0${cars.length}`}</b> The Range
+              <b>{String(cars.length).padStart(2, "0")}</b> The Range
             </span>
             <h2 className="h2">
-              Seven ways to <span className="text-outline">lose your head</span>
+              Ten ways to <span className="text-outline">lose your head</span>
             </h2>
           </div>
           <p>

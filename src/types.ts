@@ -41,6 +41,10 @@ export interface CarModel3D {
   repaint?: boolean;
   /** Exact material names to repaint (skips the body heuristic). */
   bodyMaterials?: string[];
+  /** Exact brake-caliper material names to paint with `caliperColor`. */
+  caliperMaterials?: string[];
+  /** Solid color for the brake calipers (e.g. an orange "#ff5a1e"). */
+  caliperColor?: string;
   /** Source + license line (attribution). */
   credit: string;
 }

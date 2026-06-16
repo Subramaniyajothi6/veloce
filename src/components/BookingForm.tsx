@@ -18,6 +18,10 @@ const field =
   "placeholder:text-ash/60 focus:outline-none focus:border-veloce transition-colors duration-300";
 const labelCls =
   "font-mono text-[0.66rem] tracking-[0.26em] uppercase text-ash";
+// native <option> popups ignore color-scheme on Chromium/Windows (render white),
+// so set the dropdown colours explicitly on each option
+const optionCls = "bg-coal text-cream";
+const placeholderOptionCls = "bg-coal text-ash";
 
 function Err({ state, name }: { state: BookingState; name: string }) {
   const msg = state.errors[name];
@@ -130,11 +134,11 @@ export default function BookingForm({
           className={`${field} appearance-none cursor-pointer [color-scheme:dark]`}
           required
         >
-          <option value="" disabled>
+          <option value="" disabled className={placeholderOptionCls}>
             Choose from the range
           </option>
           {cars.map((c) => (
-            <option key={c.slug} value={c.slug}>
+            <option key={c.slug} value={c.slug} className={optionCls}>
               {c.name} — {c.category}
             </option>
           ))}
@@ -153,11 +157,11 @@ export default function BookingForm({
           className={`${field} appearance-none cursor-pointer [color-scheme:dark]`}
           required
         >
-          <option value="" disabled>
+          <option value="" disabled className={placeholderOptionCls}>
             Pick a city
           </option>
           {locations.map((l) => (
-            <option key={l.city} value={l.city}>
+            <option key={l.city} value={l.city} className={optionCls}>
               {l.city} — {l.address}
             </option>
           ))}

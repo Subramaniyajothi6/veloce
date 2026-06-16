@@ -4,11 +4,11 @@ const columns = [
   {
     title: "Models",
     links: [
-      { label: "Royale", href: "/models/royale" },
-      { label: "Furia", href: "/models/furia" },
-      { label: "Vento RS", href: "/models/vento-rs" },
-      { label: "Tempesta V12", href: "/models/tempesta-v12" },
-      { label: "Volt Zero", href: "/models/volt-zero" },
+      { label: "Bugatti La Voiture Noire", href: "/models/royale" },
+      { label: "Ferrari SF90 XX", href: "/models/furia" },
+      { label: "Porsche 911 GT3", href: "/models/vento-rs" },
+      { label: "Lamborghini Centenario", href: "/models/giallo-gt" },
+      { label: "Tesla Roadster", href: "/models/volt-zero" },
       { label: "The full range", href: "/models" },
     ],
   },
@@ -104,10 +104,10 @@ export default function Footer() {
             PHOTOGRAPHY VIA{" "}
             <a
               className="border-b border-white/20 transition-colors duration-300 hover:text-veloce hover:border-veloce"
-              href="https://unsplash.com"
+              href="https://commons.wikimedia.org"
               rel="noopener"
             >
-              UNSPLASH
+              WIKIMEDIA COMMONS
             </a>{" "}
             · BUILT TO REDLINE
           </span>

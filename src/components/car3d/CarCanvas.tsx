@@ -133,6 +133,25 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
       });
     }
 
+    /* optional: paint the brake calipers a solid accent colour, lifted with a
+       little emissive so they read behind the spokes in the dark set */
+    if (model.caliperColor && model.caliperMaterials?.length) {
+      const col = new THREE.Color(model.caliperColor);
+      const cal = new THREE.MeshStandardMaterial({
+        color: col,
+        metalness: 0.2,
+        roughness: 0.5,
+        emissive: col,
+        emissiveIntensity: 0.35,
+      });
+      c.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh) return;
+        const mat = Array.isArray(m.material) ? m.material[0] : m.material;
+        if (mat && model.caliperMaterials!.includes(mat.name)) m.material = cal;
+      });
+    }
+
     /* normalize: face one way, span CAR_LENGTH, sit on y=0, centered */
     c.rotation.y = model.yaw ?? 0;
     const box = opaqueBox(c);
@@ -142,7 +161,7 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
     const center = box2.getCenter(new THREE.Vector3());
     c.position.set(-center.x, -box2.min.y, -center.z);
     return c;
-  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials]);
+  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials]);
 
   return <primitive object={car} />;
 }
@@ -256,21 +275,31 @@ export default function CarCanvas({
   progressRef,
   stages,
   staticView,
+  introOffset = false,
 }: {
   paint: string;
   model: CarModel3D;
   progressRef: React.RefObject<number>;
   stages: number;
   staticView: boolean;
+  /** Nudge the whole scene down during the intro so the big title clears it. */
+  introOffset?: boolean;
 }) {
   return (
-    <div className="absolute inset-0">
+    /* z-[2]: the car renders ABOVE the intro title (z-[1]) but below the HUD
+       overlays (z-[3]+). Canvas is transparent (no scene background) so the
+       title shows through the empty areas and is hidden behind the car body. */
+    <div
+      className={`absolute inset-0 z-[2] transition-[translate] duration-700 ease-out-expo ${
+        introOffset ? "translate-y-[20vh]" : "translate-y-0"
+      }`}
+    >
       <Canvas
         shadows
         dpr={[1, 2]}
+        gl={{ alpha: true }}
         camera={{ fov: 32, position: [5, 1.6, 6.5] }}
       >
-        <color attach="background" args={["#0a0a0b"]} />
         <fog attach="fog" args={["#0a0a0b", 14, 26]} />
         <ambientLight intensity={0.35} />
         <directionalLight
