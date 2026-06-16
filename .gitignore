@@ -49,6 +49,12 @@ next-env.d.ts
 /downloads/extracted/
 /downloads/optimized/
 
-# debug screenshots from tools/yaw-check.mjs etc.
+# debug screenshots + logs from tools/*.mjs probes
 /tools/*.png
+/tools/*.log
+
+# local photo working dirs — the chosen, processed copies live in
+# public/cars/ and attribution is in downloads/photos/credits.txt
+/downloads/gallery-cand/
+/downloads/photos/_raw/
 
