@@ -1,7 +1,5 @@
 "use server";
 
-import { appendFile, mkdir } from "fs/promises";
-import path from "path";
 import { getCar } from "@/data/cars";
 import { locations } from "@/data/locations";
 
@@ -18,8 +16,9 @@ export interface BookingState {
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Validates the booking and appends it to data/bookings.json
- *  (newline-delimited JSON — the seam Phase B's MongoDB will replace). */
+/** Validates the booking and confirms it. Persistence is deferred to Phase B
+ *  (MongoDB) — for now a valid submission is NOT stored anywhere. (Writing to
+ *  disk would fail anyway: the serverless filesystem is read-only.) */
 export async function submitBooking(
   _prev: BookingState,
   formData: FormData
@@ -28,11 +27,9 @@ export async function submitBooking(
 
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
-  const phone = String(formData.get("phone") ?? "").trim();
   const carSlug = String(formData.get("car") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
   const date = String(formData.get("date") ?? "").trim();
-  const message = String(formData.get("message") ?? "").trim();
 
   if (name.length < 2) errors.name = "Tell us your name.";
   if (!EMAIL.test(email)) errors.email = "That email doesn't look right.";
@@ -52,23 +49,7 @@ export async function submitBooking(
 
   if (Object.keys(errors).length) return { ok: false, errors };
 
-  const record = {
-    at: new Date().toISOString(),
-    name,
-    email,
-    phone,
-    car: carSlug,
-    location,
-    date,
-    message,
-  };
-  const dir = path.join(process.cwd(), "data");
-  await mkdir(dir, { recursive: true });
-  await appendFile(
-    path.join(dir, "bookings.json"),
-    JSON.stringify(record) + "\n",
-    "utf8"
-  );
-
+  /* Phase B will persist the booking here (MongoDB). Until then nothing is
+     stored — the form just validates and confirms. */
   return { ok: true, errors: {}, carName: car!.name };
 }
