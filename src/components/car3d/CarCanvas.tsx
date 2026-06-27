@@ -266,8 +266,11 @@ function Rig({
     let fit = 1;
     if (aspect < REF_ASPECT) {
       const hRef = 2 * Math.atan(Math.tan((shot.fov * Math.PI) / 360) * REF_ASPECT);
-      fov = Math.min(74, (2 * Math.atan(Math.tan(hRef / 2) / aspect) * 180) / Math.PI);
-      fit = 1 + (REF_ASPECT / aspect - 1) * 0.16;
+      /* fov clamp + pull-back coefficient trade "whole car always visible"
+         against "car big enough to read" — lower clamp / smaller coefficient
+         => the car fills more of a phone screen (widest shots crop slightly). */
+      fov = Math.min(62, (2 * Math.atan(Math.tan(hRef / 2) / aspect) * 180) / Math.PI);
+      fit = 1 + (REF_ASPECT / aspect - 1) * 0.1;
     }
 
     const a = shot.angle + shot.sweep * e;
