@@ -9,6 +9,11 @@ import type { CarModel3D } from "@/types";
 /** Longest horizontal dimension every car is normalized to (world units). */
 const CAR_LENGTH = 4.4;
 
+/** Aspect ratio the cinematic shots were composed for (≈1440×900 landscape).
+ *  Narrower viewports (phones in portrait) get the lens widened + camera eased
+ *  back so the wide car keeps its framing instead of spilling out of frame. */
+const REF_ASPECT = 1.6;
+
 const BODY_NAME = /body|paint|chasis|chassis|shell/i;
 
 /** Surface area of a mesh's geometry (relative — used to find the body). */
@@ -252,8 +257,21 @@ function Rig({
       shot = shots[i];
       e = smoother(s - i);
     }
+    /* fov is the VERTICAL field of view; on a portrait canvas the horizontal
+       view collapses and the wide car gets cropped. Widen the lens to preserve
+       the landscape horizontal framing (clamped so it never goes fish-eye) and
+       ease the camera back a touch so even the tight shots keep the car whole. */
+    const aspect = state.size.width / Math.max(1, state.size.height);
+    let fov = shot.fov;
+    let fit = 1;
+    if (aspect < REF_ASPECT) {
+      const hRef = 2 * Math.atan(Math.tan((shot.fov * Math.PI) / 360) * REF_ASPECT);
+      fov = Math.min(74, (2 * Math.atan(Math.tan(hRef / 2) / aspect) * 180) / Math.PI);
+      fit = 1 + (REF_ASPECT / aspect - 1) * 0.16;
+    }
+
     const a = shot.angle + shot.sweep * e;
-    const r = shot.radius + shot.dolly * e;
+    const r = (shot.radius + shot.dolly * e) * fit;
     const h = shot.height + shot.rise * e;
     /* handheld drift — two slow sines so it never reads as a loop */
     const t = state.clock.elapsedTime;
@@ -263,7 +281,7 @@ function Rig({
     cam.position.lerp(target, staticView ? 1 : 0.09);
     look.lerp(lookGoal.set(dx * 0.4, shot.lookY, 0), staticView ? 1 : 0.08);
     cam.lookAt(look);
-    cam.fov += (shot.fov - cam.fov) * (staticView ? 1 : 0.06);
+    cam.fov += (fov - cam.fov) * (staticView ? 1 : 0.06);
     cam.updateProjectionMatrix();
   });
   return null;
