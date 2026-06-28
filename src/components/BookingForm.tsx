@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { submitBooking, type BookingState } from "@/app/test-drive/actions";
+import { submitBooking, type BookingState } from "@/app/(site)/test-drive/actions";
 import { locations } from "@/data/locations";
 
 const initialBookingState: BookingState = { ok: false, errors: {} };
@@ -195,6 +195,14 @@ export default function BookingForm({
           className={`${field} resize-none`}
         />
       </div>
+
+      {state.errors.form && (
+        <div className="col-span-2 max-[700px]:col-span-1">
+          <p className="font-mono text-[0.74rem] tracking-[0.06em] text-veloce border border-veloce/40 bg-veloce/10 px-4 py-3">
+            {state.errors.form}
+          </p>
+        </div>
+      )}
 
       <div className="col-span-2 max-[700px]:col-span-1 flex items-center gap-6 flex-wrap">
         <button

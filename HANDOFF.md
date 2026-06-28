@@ -205,19 +205,41 @@ non-black heuristic skips it), tempesta-v12 (`Body_Color` — "Painted_Black"
 trim outranks it AND matches /paint/), giallo-gt (`Carbon_R` + `Material` —
 authored carbon+orange), notte-v10 (`Car_Paint`, `Car_Paint.001`).
 
-## PENDING — Phase B (user explicitly wants this)
+## DONE — Phase B (dynamic inventory + bookings + admin)
 
-Approved plan exists (originally at
-`C:\Users\subra\.claude\plans\what-if-we-want-parallel-hamming.md`):
+Built 2026-06-27, verified end-to-end against a live MongoDB Atlas cluster.
+**Fallback-safe**: with no `MONGODB_URI` the whole site runs on the static
+`src/data` content exactly as before — the DB is purely additive.
 
-1. **MongoDB Atlas + Mongoose**: `Car` collection seeded from `src/data/cars.ts`;
-   cached connection helper `src/lib/db.ts`; swap data imports for DB queries
-   in server components (the data files are the designed seam).
-2. **Test-drive booking**: ~~replace `mailto:` CTAs with a form~~ DONE as a
-   local form (see `/test-drive` above) — Phase B swaps the
-   `data/bookings.json` append in `app/test-drive/actions.ts` for a
-   `Booking` collection (+ optional email via Resend).
-3. **Admin**: `/admin` route group, Auth.js, CRUD for cars.
+1. **MongoDB + Mongoose** — `src/lib/db.ts` (cached connection, returns `null`
+   with no URI), `src/models/Car.ts` + `Booking.ts`. `src/lib/inventory.ts` is
+   the single seam: `getCars()`/`getCar()` read DB-or-static and **merge the
+   3D-rig config (paint/yaw/material names) from code by slug**, so DB stores
+   only editable inventory and admin edits can't break the 3D scene. `/models`
+   and `/models/[slug]` read through it. Seed with `npm run seed`
+   (`scripts/seed.ts`, tsx, idempotent upsert by slug).
+2. **Booking persistence** — `/test-drive` action writes to the `Booking`
+   collection when a DB is configured, else validates/confirms only.
+3. **Admin** (`/admin`) — **password + cookie auth** (not Auth.js; OAuth can be
+   added later). `src/lib/session.ts` (HMAC-signed token, node:crypto),
+   `src/lib/auth.ts` (cookie + `requireAuth`), **`src/proxy.ts`** (Next 16
+   renamed `middleware`→`proxy`, Node runtime, guards `/admin/*`). Pages: login,
+   dashboard, cars list + create/edit (`CarForm`, specs/gallery/track as JSON) +
+   delete, bookings list + status + delete. Mutations re-check auth + DB.
+
+**Site refactor**: marketing chrome (Nav/Footer/Cursor/effects) moved from the
+root layout into a `(site)` route group so `/admin` renders on a clean shell.
+URLs unchanged. Root layout is now just html/fonts/globals.
+
+**Env vars** (`.env.example`): `MONGODB_URI`, `ADMIN_PASSWORD`, `SESSION_SECRET`
+— all optional; set in `.env.local` (gitignored) and in Vercel for production.
+Atlas network access must allow `0.0.0.0/0` for Vercel. `.env.local` is the only
+config; nothing else is read (verified by grepping `process.env`).
+
+### Still open (offered, not built)
+- Home Showroom/Flagships/Archive still read their own static `src/data` files
+  (not the DB) — wire them to Mongo if dynamic home content is wanted.
+- Optional Resend email on booking; admin delete has no confirm step yet.
 
 ## PENDING — effect ideas offered to user (Codrops-style, not yet built)
 

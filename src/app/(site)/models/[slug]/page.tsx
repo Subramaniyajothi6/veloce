@@ -4,9 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import CarExperience from "@/components/car3d/CarExperience";
-import { cars, getCar } from "@/data/cars";
+import { getCar, getCars } from "@/lib/inventory";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const cars = await getCars();
   return cars.map((c) => ({ slug: c.slug }));
 }
 
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const car = getCar(slug);
+  const car = await getCar(slug);
   if (!car) return {};
   return {
     title: `${car.name} — VELOCE Motors`,
@@ -30,9 +31,10 @@ export default async function CarPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const car = getCar(slug);
+  const car = await getCar(slug);
   if (!car) notFound();
 
+  const cars = await getCars();
   const index = cars.findIndex((c) => c.slug === car.slug);
   const next = cars[(index + 1) % cars.length];
 

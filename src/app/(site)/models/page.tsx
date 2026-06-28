@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { cars } from "@/data/cars";
+import { getCars } from "@/lib/inventory";
 
 export const metadata: Metadata = {
   title: "The Range — VELOCE Motors",
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
     "Ten machines, one obsession. Explore every model in the VELOCE range in 3D.",
 };
 
-export default function ModelsPage() {
+export default async function ModelsPage() {
+  const cars = await getCars();
   return (
     <section className="sec pt-[clamp(8rem,16vh,11rem)]">
       <div className="wrap">

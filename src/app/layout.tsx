@@ -1,12 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Manrope, Space_Grotesk } from "next/font/google";
-import Cursor from "@/components/Cursor";
-import Footer from "@/components/Footer";
-import Nav from "@/components/Nav";
-import Noise from "@/components/Noise";
-import RouteEffects from "@/components/RouteEffects";
-import ScrollProgress from "@/components/ScrollProgress";
-import ToTop from "@/components/ToTop";
 import "./globals.css";
 
 const anton = Anton({
@@ -38,6 +31,11 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0b",
 };
 
+/**
+ * Minimal root: fonts, global CSS and the `js` class gate. The marketing chrome
+ * (nav, footer, cursor, effects) lives in the `(site)` route-group layout so the
+ * `/admin` panel renders on its own clean shell.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,18 +55,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
-        <Noise />
-        <ScrollProgress />
-        <Cursor />
-        <Nav />
-        <main id="top" className="relative z-[2]">
-          {children}
-        </main>
-        <Footer />
-        <ToTop />
-        <RouteEffects />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
