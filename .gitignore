@@ -58,4 +58,8 @@ next-env.d.ts
 # public/cars/ and attribution is in downloads/photos/credits.txt
 /downloads/gallery-cand/
 /downloads/photos/_raw/
+/public/cars/_incoming/
+
+# internal handoff note — kept on disk, not committed
+/IMAGE-UPGRADE-HANDOFF.md
 

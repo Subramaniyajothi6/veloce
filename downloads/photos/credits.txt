@@ -19,6 +19,22 @@ volt-zero.jpg             | Tesla roadster 2020 prototype.jpg                  |
 royale-g1.jpg / royale-g2.jpg       | Bugatti-La-Voiture-Noire.jpg / -Racing.jpg                       | ZenitsuThu                   | CC BY-SA 4.0
 furia-g1.jpg / furia-g2.jpg         | 2024 Ferrari SF90 XX Spider 2.jpg / Ferrari SF90 XX Stradale.jpg | Calreyn88 / Alexandre Prevot | CC BY-SA 4.0 / CC BY-SA 2.0
 vento-rs-g3.jpg / vento-rs-g4.jpg   | user-supplied "Porsche 911 GT3 RS driving, racetrack" (desktop wallpapers) | provenance/licence UNVERIFIED — replace before any public deploy
+vento-rs-rear.jpg                   | porsche.com "911 GT3 RS rear" (official press image)  | Porsche AG | © Porsche AG, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+vento-rs-grid.jpg                   | user-supplied "911 GT3 RS, pit-lane start line" (desktop wallpaper) | Porsche AG (press image) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+vento-rs-cabin.jpg                  | porsche.com "911 GT3 RS Clubsport package interior" (official press image) | Porsche AG | © Porsche AG, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+vento-rs-side.jpg                   | user-supplied "911 GT3 RS parked, racetrack" (desktop wallpaper, elevated front 3/4) | Porsche AG (press image) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+vento-rs-corner.jpg                 | user-supplied "911 GT3 RS driving, racetrack corner" (desktop wallpaper, front cornering) | Porsche AG (press image) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+vento-rs-straight.jpg               | user-supplied "911 GT3 RS driving, racetrack" (desktop wallpaper, rear straight-on) | Porsche AG (press image) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+
+## furia — Ferrari SF90 XX Stradale official press set (ferrari.com / ferrari-cdn.thron.com).
+## Silver/orange launch livery; 3D model recoloured to silver to match. Supersedes the old
+## furia.jpg / furia-g1.jpg / furia-g2.jpg "in the wild" shots (now unreferenced).
+furia-front.jpg    | ferrari.com SF90 XX Stradale, front 3/4 on track   | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-nose.jpg     | ferrari.com SF90 XX Stradale, head-on on track      | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-top.jpg      | ferrari.com SF90 XX Stradale, elevated 3/4 cornering | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-rear.jpg     | ferrari.com SF90 XX Stradale, dead-rear (wing/diffuser) | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-cabin.jpg    | ferrari.com SF90 XX Stradale, cabin (buckets + harness) | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-cockpit.jpg  | ferrari.com SF90 XX Stradale, cockpit (wheel + dash)    | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
 giallo-gt-g1.jpg / giallo-gt-g2.jpg | 2016-03-01 Geneva Motor Show G078.JPG / G082.JPG                 | Ghoster                      | CC BY-SA 4.0
 notte-v10-g1.jpg / notte-v10-g2.jpg | 2016 Audi R8 Plus 1.jpg / Audi R8 V10 Decennium.jpg             | Calreyn88 / Alexandre Prevot | CC BY-SA 4.0
 
@@ -27,7 +43,6 @@ notte-v10-g1.jpg / notte-v10-g2.jpg | 2016 Audi R8 Plus 1.jpg / Audi R8 V10 Dece
 ## notte-v10-classic), where the car matches. The renamed main cars use the -g1/-g2 set above.
 royale-2.jpg / royale-3.jpg             | 2024 Bugatti Bolide (4,5).jpg                 | Calreyn88              | CC BY-SA 4.0
 furia-2.jpg / furia-3.jpg               | Ferrari 599 GTO, Pau 2015 (+ Rosso Corsa).jpg | Handelsgeselschaft / Axion23 | CC BY-SA 4.0 / CC BY 2.0
-vento-rs-2.jpg / vento-rs-3.jpg         | Ford GT40 (various).jpg                       | MrWalkr / Alexander Migl | CC BY-SA 4.0
 tempesta-v12-2.jpg / tempesta-v12-3.jpg | Toyota Supra A80 (various).jpg                | Tokumeigakarinoaoshima / Thesupermat | CC BY-SA
 giallo-gt-2.jpg / giallo-gt-3.jpg       | BMW M8 (various).jpg                          | Ghostofakina / Alexander Migl | CC BY-SA 4.0
 notte-v10-2.jpg / notte-v10-3.jpg       | Dodge Challenger RT Shaker / SRT.jpg          | Elise240SX / McChizzle | CC BY-SA 4.0 / PD

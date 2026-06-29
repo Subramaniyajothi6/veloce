@@ -1,5 +1,5 @@
 import "server-only";
-import type { CarModel3D, CarProfile } from "@/types";
+import type { CarFeature, CarHighlight, CarModel3D, CarProfile } from "@/types";
 import { cars as staticCars, getCar as getStaticCar } from "@/data/cars";
 import { connectDB } from "@/lib/db";
 import { CarModel } from "@/models/Car";
@@ -30,9 +30,16 @@ interface LeanCar {
   track?: Array<{ label?: string | null; value?: string | null; note?: string | null }>;
 }
 
-/** Code-only 3D rig overrides, keyed by slug, lifted from the static dataset. */
-const rig = new Map<string, { paint: string; model: CarModel3D }>(
-  staticCars.map((c) => [c.slug, { paint: c.paint, model: c.model }])
+/** Code-only content keyed by slug (3D rig + editorial detail blocks), lifted
+ *  from the static dataset and merged onto the DB inventory on read. */
+const rig = new Map<
+  string,
+  { paint: string; model: CarModel3D; highlights?: CarHighlight[]; features?: CarFeature[] }
+>(
+  staticCars.map((c) => [
+    c.slug,
+    { paint: c.paint, model: c.model, highlights: c.highlights, features: c.features },
+  ])
 );
 
 /** Build a full `CarProfile` from a DB inventory doc + its code rig override. */
@@ -70,6 +77,8 @@ function toProfile(doc: LeanCar): CarProfile {
       value: t.value ?? "",
       note: t.note ?? "",
     })),
+    highlights: override?.highlights,
+    features: override?.features,
   };
 }
 

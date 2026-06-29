@@ -63,6 +63,22 @@ export interface TrackStat {
   note: string;
 }
 
+/** Porsche-style highlight card (2×2 grid on the detail page). */
+export interface CarHighlight {
+  title: string;
+  copy: string;
+  image: string;
+}
+
+/** Alternating image/text "engineering" feature story on the detail page. */
+export interface CarFeature {
+  title: string;
+  copy: string;
+  image: string;
+  /** Optional headline figure shown beside the copy. */
+  stat?: { value: string; label: string };
+}
+
 /** Full car profile backing /models and /models/[slug]. */
 export interface CarProfile {
   slug: string;
@@ -81,6 +97,10 @@ export interface CarProfile {
   gallery: CarPhoto[];
   /** Track numbers for the detail page. */
   track: TrackStat[];
+  /** Optional Porsche-style highlight grid (detail page). */
+  highlights?: CarHighlight[];
+  /** Optional engineering feature stories (detail page). */
+  features?: CarFeature[];
 }
 
 /** Flagship spotlight (alternating image/copy article). */

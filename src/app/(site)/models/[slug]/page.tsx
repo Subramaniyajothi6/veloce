@@ -4,6 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import CarExperience from "@/components/car3d/CarExperience";
+import EngineeringFeatures from "@/components/cardetail/EngineeringFeatures";
+import Highlights from "@/components/cardetail/Highlights";
+import ModelSubNav, { type SubNavSection } from "@/components/cardetail/ModelSubNav";
+import SpecCompare from "@/components/cardetail/SpecCompare";
 import { getCar, getCars } from "@/lib/inventory";
 
 export async function generateStaticParams() {
@@ -38,12 +42,27 @@ export default async function CarPage({
   const index = cars.findIndex((c) => c.slug === car.slug);
   const next = cars[(index + 1) % cars.length];
 
+  // Porsche-style enhanced layout — shown for cars that carry the extra content.
+  const enhanced = Boolean(car.highlights?.length);
+  const sections: SubNavSection[] = (
+    [
+      { id: "overview", label: "Overview" },
+      car.highlights?.length ? { id: "highlights", label: "Highlights" } : null,
+      car.features?.length ? { id: "engineering", label: "Engineering" } : null,
+      { id: "specs", label: "Specs" },
+      enhanced ? { id: "compare", label: "Compare" } : null,
+      { id: "gallery", label: "Gallery" },
+    ] as (SubNavSection | null)[]
+  ).filter((s): s is SubNavSection => s !== null);
+
   return (
     <>
       <CarExperience car={car} />
 
+      {enhanced && <ModelSubNav sections={sections} />}
+
       {/* story + photography */}
-      <section className="sec">
+      <section id="overview" className="sec scroll-mt-24">
         <div className="wrap grid grid-cols-[1.1fr_1fr] gap-[clamp(2.5rem,6vw,5rem)] items-center max-[860px]:grid-cols-1">
           <div className="reveal">
             <span className="eyebrow">
@@ -81,8 +100,12 @@ export default async function CarPage({
         </div>
       </section>
 
+      {car.highlights?.length ? (
+        <Highlights items={car.highlights} carName={car.name} />
+      ) : null}
+
       {/* full specification sheet */}
-      <section className="sec pt-0">
+      <section id="specs" className="sec pt-0 scroll-mt-24">
         <div className="wrap">
           <div className="sec-top reveal">
             <div>
@@ -133,8 +156,14 @@ export default async function CarPage({
         </div>
       </section>
 
+      {car.features?.length ? (
+        <EngineeringFeatures items={car.features} />
+      ) : null}
+
+      {enhanced ? <SpecCompare car={car} allCars={cars} /> : null}
+
       {/* photography */}
-      <section className="sec pt-0">
+      <section id="gallery" className="sec pt-0 scroll-mt-24">
         <div className="wrap">
           <div className="sec-top reveal">
             <div>
