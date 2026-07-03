@@ -6,6 +6,62 @@
 > `yaw`/`bodyMaterials` overrides and the giallo `--flatten false --join
 > false` exception. This file is kept for re-download provenance.
 
+---
+
+## 2026-07-01 flagship swap (IN PROGRESS)
+
+Removing the two non-flagship cars (bad overview-page photos) and adding two
+real hypercars to the flagship line.
+
+**Remove** from `src/data/cars.ts` main line:
+- `notte-v10` — Audi R8 V10
+- `volt-zero` — Tesla Roadster
+
+**Add** (download these two zips into `D:\New website\veloce\downloads\`):
+
+| Save zip as | Car | Sketchfab model | License | Notes |
+|---|---|---|---|---|
+| `koenigsegg-gemera.zip` | Koenigsegg Gemera | [3DStarving](https://sketchfab.com/3d-models/koenigsegg-gemera-d127740a40dd4b8f85de7862de6076fd) | **CONFIRM on page** | 1.2M tris — heavy, will decimate hard. If NOT downloadable, use fallback ↓ |
+| `pagani-huayra.zip` | Pagani Huayra | [Black Snow](https://sketchfab.com/3d-models/pagani-huayra-free-c2d61a9f53a54a229547bb76e4b71e25) | CC Attribution 4.0 | 291k tris, base Huayra coupé |
+
+**Gemera fallback** (if 3DStarving's is not downloadable / not CC): use
+[Ddiaz Design 2021 Gemera](https://sketchfab.com/3d-models/2021-koenigsegg-gemera-d4cfb0e550e1495ba60c5275d3ce03d7)
+— CC Attribution 4.0, downloadable, 234k tris (same author/weight as SF90 + GT3).
+
+Download steps: open link → check the license line by the author name → click
+**Download 3D Model** → **glTF** → rename the zip as above → drop in `downloads/`
+→ tell Claude. Optimization + wiring + photos are automated from there.
+
+### Gemera — LOCKED spec (Graphite Mono variant, chosen 2026-07-01)
+
+- **slug:** `gemera` · **name:** "Koenigsegg Gemera" · **category:** "Four-Seat Mega-GT" · **price:** €1,700,000
+- **paint (3D repaint):** graphite grey ~`#9aa0a6` (Graphite Mono → grey car, NOT emerald). Confirm exact `bodyMaterials` from the real GLB via `tools/mat-rank.mjs`.
+- **Replaces:** removes `notte-v10` (Audi R8) + `volt-zero` (Tesla) from the main line in `cars.ts`, `src/data/showroom.ts`, `src/data/flagships.ts`, `src/components/Footer.tsx`. (Leave the `-classic` cars alone.)
+- **Images** — grade sources from `downloads/photos/gemera-review/orig/` into `public/cars/` (apply the site grade via `tools/grade-photos.mjs`), then `npx tsx scripts/sync-car.ts gemera`:
+
+  | public/cars target | source | slot |
+  |---|---|---|
+  | `gemera.jpg` | `kc-5` | `image` (grid thumb + overview) |
+  | `gemera-doors.jpg` | `tg-4662` | highlight 1 — doors |
+  | `gemera-seats.jpg` | `tg-4947` | highlight 2 — four seats |
+  | `gemera-rear.jpg` | `tg-4671` | highlight 3 — rear/aero |
+  | `gemera-profile.jpg` | `tg-4660` | highlight 4 — profile |
+  | `gemera-engine.jpg` | `tg-4807` | feature 1 — engine bay |
+  | `gemera-cabin.jpg` | `tg-4952` | feature 2 — cabin |
+  | `gemera-cockpit.jpg` | `tg-5099` | feature 3 — cockpit |
+  | `gemera-exhaust.jpg` | `sv-6` | feature 4 — exhaust |
+  | `gemera-mirror.jpg` | `sv-g3` | feature 5 — camera mirror |
+  | `gemera-screens.jpg` | `sv-g4` | feature 6 — screens |
+  | `gemera-g1.jpg` | `tg-4685` | gallery — doors-up |
+  | `gemera-g2.jpg` | `tg-bahn-359` | gallery — emerald motion |
+  | `gemera-g3.jpg` | `tg-runway-2` | gallery — emerald rear |
+  | `gemera-g4.jpg` | `kc-3` | gallery — grey motion |
+
+  (`tg-4668` = spare.) Specs/copy already written in `downloads/photos/gemera-review/demo.html` (`C` object) — port them into the `cars.ts` entry.
+- **Note:** these are press/dealer photos (TopGear/Koenigsegg Chicago/Supervettura), not CC like the rest — portfolio-only.
+
+---
+
 Sketchfab requires a logged-in account to download (a free account is enough —
 "Sign up" with Google works). Claude cannot do this step programmatically.
 

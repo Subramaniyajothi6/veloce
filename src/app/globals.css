@@ -1,4 +1,8 @@
-@import "tailwindcss";
+/* Scope Tailwind's content scan to the app source only. Automatic detection
+   otherwise walks the whole project (public/ images, downloads/, …), which on a
+   low-RAM machine makes @tailwindcss/oxide's allocation balloon and OOM. */
+@import "tailwindcss" source(none);
+@source "../";
 
 /* ==========================================================
    VELOCE design tokens

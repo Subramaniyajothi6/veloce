@@ -39,9 +39,12 @@ Run: `npm run dev` (localhost:3000) · Build: `npm run build` (passes clean, all
   (pinned horizontal-scroll gallery) → Flagships (clip-path reveals + counters)
   → Pre-owned (parallax banner) → Services (hover rows) → Record (stat counters
   + quote) → Archive (hover list w/ cursor-trailing image preview) → Visit (CTA).
-- `/models` — "The Range" grid of all 7 cars.
-- `/models/[slug]` — SSG detail pages (royale, furia, vento-rs, tempesta-v12,
-  giallo-gt, notte-v10, volt-zero): **cinematic 3D scroll experience**
+- `/models` — "The Range" grid of all cars.
+- `/models/[slug]` — SSG detail pages. **Current lineup (2026-07-03): royale,
+  furia, vento-rs, giallo-gt, gemera, huayra** + a "classic" line (royale-classic,
+  furia-classic, tempesta-v12-classic, notte-v10-classic). [notte-v10 (Audi R8) +
+  volt-zero (Tesla) were REMOVED; gemera + huayra ADDED — see the 2026-07 section
+  below.] **cinematic 3D scroll experience**
   (pinned section, height = stages × 85vh where stages = specs.length + 2;
   R3F camera cuts between keyframed "shots" — low front hero, long-lens
   close-up, side profile, rear 3/4, overhead crane, tight nose — each with a
@@ -241,6 +244,125 @@ config; nothing else is read (verified by grepping `process.env`).
   (not the DB) — wire them to Mongo if dynamic home content is wanted.
 - Optional Resend email on booking; admin delete has no confirm step yet.
 
+## DONE 2026-06-30 — giallo-gt ground gap + shadow-map warning
+
+Two fixes on the `/models/[slug]` 3D scene, both in
+`src/components/car3d/CarCanvas.tsx` (only file touched; no data/type changes):
+
+1. **Car floated above the ground (giallo-gt only).** Root cause was **NOT** a
+   stray low mesh — trap #8 / `Object_12` (the y=−0.51 shell) is correctly
+   dropped by the area filter and never sets the ground line. The real cause:
+   giallo-gt's GLB bakes a **rotation into the wheel node transforms**, and
+   `Box3.setFromObject(mesh)` defaults to bounding the *rotated geometry's AABB
+   corners*, which inflates ~0.13 units below the real tyre and lifted the whole
+   car. Fix: `opaqueBox()` now calls **`setFromObject(mesh, true)`** (precise =
+   bounds the actual vertices). General + safe: identical to before for
+   axis-aligned meshes (furia and the rest are byte-for-byte unchanged), only
+   tighter for rotated ones. Verified with an orthographic side-on render
+   against a y=0 reference line — giallo now sits on its tyres, furia unchanged.
+2. **Console warning** `THREE.WebGLShadowMap: PCFSoftShadowMap has been
+   deprecated. Using PCFShadowMap instead.` three 0.184 deprecated
+   `PCFSoftShadowMap` (what the boolean `<Canvas shadows>` selects) and silently
+   falls back to `PCFShadowMap`. Set it explicitly: **`<Canvas
+   shadows="percentage">`** (R3F maps `"percentage"` → `PCFShadowMap`). Same
+   shadows, warning gone.
+
+### Traps from this session
+- `Box3.setFromObject(mesh)` bounds the geometry's local AABB *corners*
+  transformed to world. For a mesh with a baked rotation (found-model wheels)
+  that wrapper balloons well past the real vertices → floats the car. Use
+  `setFromObject(mesh, true)` (precise) whenever the result drives grounding.
+  This is distinct from trap #8 (which is about the area filter, still valid).
+- R3F boolean `<Canvas shadows>` ⇒ `PCFSoftShadowMap`, deprecated in three 0.184
+  (console warning + silent fallback). Use `shadows="percentage"` for
+  `PCFShadowMap` explicitly (or `"soft"`/`"variance"` for the others).
+- Debugging tip used here: an **orthographic** side render with a bright line at
+  y=0 makes wheel-to-ground contact unambiguous; a perspective camera or a
+  reference line not directly under the wheels will lie to you. Calibrate by
+  rendering a known-good car (furia) alongside the suspect one.
+
+## DONE 2026-07-01→03 — flagship swap (Gemera + Huayra) + fixes
+
+**Two non-flagship cars swapped for two hypercars.** Removed `notte-v10`
+(Audi R8) + `volt-zero` (Tesla), added `gemera` (Koenigsegg Gemera) + `huayra`
+(Pagani Huayra BC). Main line is now **royale, furia, vento-rs, giallo-gt,
+gemera, huayra** (6) + the unchanged classic line. Touched `cars.ts`,
+`showroom.ts`, `flagships.ts` (now Gemera N°1 + Bugatti La Voiture Noire N°2),
+`Footer.tsx`, and MongoDB (see DB note). `tsc --noEmit` clean; routes verified
+200. 3D renders not yet eyeballed by the user (a `yaw`/`bodyMaterials` tweak may
+still be wanted on either car).
+
+- **Gemera** — Ddiaz "2021 Koenigsegg Gemera" GLB (CC-BY), optimized 15.8→1.8 MB
+  → `public/models/gemera.glb`. Grey Graphite livery: `paint "#9aa0a6"`,
+  `bodyMaterials: ["Koenigsegg_Gemera_2021Paint_Material"]`. 15 press photos
+  graded into `public/cars/gemera*`.
+- **Huayra** — Ddiaz "2020 Pagani Huayra Roadster BC" GLB (CC-BY-NC-SA — NC is
+  fine for a showcase), optimized 21.7→2.34 MB → `public/models/huayra.glb`.
+  Silver: `paint "#c9cccd"`,
+  `bodyMaterials: ["Pagani_HuayraBCRoadsterLS_2019Paint_Material"]` (Carbon1
+  panels + RED_PAINT pinstripe kept). 14 press photos graded into
+  `public/cars/huayra*` (this car has **7 features**, not the usual 3). Full spec
+  + image map: `downloads/HUAYRA-HANDOFF.md`. Review source photos kept in
+  `downloads/photos/huayra-review/orig/` — re-grade from there to swap any image
+  (source→`public/cars/huayra-*.jpg`, sharp grade brightness .9/sat .84/linear
+  1.06,-10/vignette, width 1600).
+
+**DB note (bit me):** `inventory.ts toProfile` takes `modelUrl` from the DB
+(`doc.modelUrl || override.model.url`), so after changing a `model.url` in code
+you MUST re-sync: `npx tsx scripts/sync-car.ts <slug>` — otherwise the stale DB
+url wins. `seed.ts`/`sync-car.ts` only UPSERT — to REMOVE a car from the DB you
+must `deleteMany({ slug })` yourself (done for notte-v10/volt-zero). `image` +
+`gallery` are DB-backed (re-sync after editing); `highlights`/`features` come
+from code (cars.ts) — no sync, but clear `.next/dev/cache/images` after
+re-grading any file.
+
+### Trap: Tailwind v4 @tailwindcss/oxide OOM (dev server 500s on every route)
+Symptom: `npm run dev` says "Ready", then every route 500s; log = Turbopack
+FATAL panic on `globals.css` with **`memory allocation of 2013265920 bytes
+failed`** (os error 10054). Cause: Tailwind's oxide engine auto-scans the WHOLE
+project (public/ images, downloads/) and tries to grab ~1.9 GB — fails on a
+low-RAM (8 GB) box. Hits BOTH Turbopack and `next dev --webpack` (same engine).
+NOT a code bug (tsc clean; deleting `.next` doesn't help). **Fix (permanent),
+in `src/app/globals.css`:**
+
+    @import "tailwindcss" source(none);
+    @source "../";   /* scan src/ only — all TSX/TS live there */
+
+Every route went 200 immediately after. (Freeing RAM also works, but this is
+permanent + good practice.) Distinct from the image-optimizer deadlock (trap #5).
+
+### PENDING — Cloudinary image CDN (in progress, blocked on user)
+Goal: full-quality originals stay in the GitHub repo; images served via
+Cloudinary (`f_auto`/`q_auto`/resize) so nothing is compressed locally.
+**Cloud name: `dc6fd4ith`** (user's free account). Chosen plan = **UPLOAD mode**
+(not fetch — fetch can't pull from `localhost` in dev, and the repo has a messy
+uncommitted tree so a clean push isn't trivial): upload `public/cars/*` to
+Cloudinary, then add a `next/image` **custom loader** so `/cars/x.jpg` renders as
+`res.cloudinary.com/dc6fd4ith/image/upload/f_auto,q_auto,w_<width>/veloce/cars/x`
+— **zero changes to cars.ts / the DB**. GLBs stay served from the repo.
+**BLOCKED:** need an **UNSIGNED upload preset** (built-in `ml_default` is
+signed-only → "must be whitelisted for unsigned uploads"). Next steps once the
+user pastes the preset name: (1) `curl` upload every `public/cars/*.jpg` with
+`-F upload_preset=<name> -F folder=veloce/cars -F public_id=<basename>`;
+(2) add `src/lib/cloudinary-loader.ts` + `images: { loader:'custom',
+loaderFile:'./src/lib/cloudinary-loader.ts' }` in next.config; (3) verify.
+Scope still open (all cars vs. new-only). Alternative offered: fetch mode via a
+clean GitHub push — user leaned upload.
+
+### Git state (2026-07-03) — do not bulk-commit
+Working tree = ~94 uncommitted changes on `main` (remote
+`github.com/Subramaniyajothi6/veloce`), **including earlier-session work NOT from
+the 2026-07 swap** (`CarCanvas.tsx`, `types.ts`, deleted `furia-*.jpg`,
+`public/_review/`, `credits.txt`, `MODELS.md`). **Do NOT `git add -A`** — commit
+deliberately. Nothing from the 2026-07 work is committed/pushed yet, so a
+Cloudinary *fetch* approach (needs images on GitHub) isn't ready.
+
+### Cleanup done
+Removed the raw Huayra source GLB (21.7 MB) after optimizing, and the Huayra
+review pages (`index/demo/compare.html` + `thumbs/`) — kept `orig/` for
+re-grades. Gemera raw GLB (`downloads/2021_koenigsegg_gemera.glb`, 15.7 MB) still
+present (offered to remove).
+
 ## PENDING — effect ideas offered to user (Codrops-style, not yet built)
 
 WebGL distortion/ripple on image hover · image-trail following cursor on
@@ -287,8 +409,13 @@ ghost headings · drag-to-explore gallery · infinite WebGL carousel for Archive
    const object silently hands the client a broken action proxy.
 2. `gltf-transform optimize` defaults include `palette` which merges/renames
    materials → kills the body-repaint heuristic. Always `--palette false`.
-3. `.next/cache/images` survives rebuilds → stale photos after replacing
-   files in public/. Delete it.
+3. The Next image-optimizer cache survives rebuilds → stale photos after
+   replacing files in public/. Delete it. **Path: in Next 16 + Turbopack DEV
+   the cache is `.next/dev/cache/images`, NOT `.next/cache/images`** (the prod
+   path). Clearing the wrong one does nothing; verify by requesting an
+   un-cached width — if a fresh width is correct but a previously-loaded width
+   is stale, you cleared the wrong dir. Browser also caches the optimized URL,
+   so hard-refresh (Ctrl+Shift+R) after clearing.
 4. PowerShell 5.1 `Get-Content`/`Set-Content` mojibakes UTF-8 (€ → â‚¬) —
    edit source files with proper tooling only.
 5. Don't kill the Turbopack dev server's processes while sharing its `.next`

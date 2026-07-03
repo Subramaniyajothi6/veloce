@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>giallo-gt — image review (Lamborghini Centenario)</title>
+<style>
+  :root { --night:#0a0a0b; --panel:#141416; --cream:#f2f1ec; --ash:#8e8d86; --line:rgba(255,255,255,.10); --red:#e10600; --green:#3ddc84; --amber:#f4c20d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--night); color:var(--cream); font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
+  header { padding:28px 32px 8px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(10,10,11,.92); backdrop-filter:blur(8px); z-index:5; }
+  h1 { margin:0 0 4px; font-size:22px; letter-spacing:.02em; }
+  h1 small { color:var(--ash); font-weight:400; font-size:14px; }
+  .hint { color:var(--ash); font-size:13.5px; margin:6px 0 0; max-width:900px; }
+  h2 { margin:34px 32px 0; font-size:15px; letter-spacing:.08em; text-transform:uppercase; color:var(--cream); }
+  h2 span { color:var(--ash); text-transform:none; letter-spacing:0; font-weight:400; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px; padding:16px 32px 8px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+  .imgwrap { position:relative; height:240px; background:#000; display:flex; align-items:center; justify-content:center; }
+  .imgwrap img { width:100%; height:100%; object-fit:contain; display:block; }
+  .num { position:absolute; top:8px; left:8px; background:rgba(0,0,0,.7); border:1px solid var(--line); border-radius:6px; padding:2px 8px; font-weight:700; font-size:13px; }
+  .badge { position:absolute; top:8px; right:8px; font-size:11px; font-weight:700; letter-spacing:.04em; padding:3px 8px; border-radius:6px; text-transform:uppercase; }
+  .b-slot { background:rgba(61,220,132,.16); color:var(--green); border:1px solid rgba(61,220,132,.4); }
+  .b-spare { background:rgba(244,194,13,.14); color:var(--amber); border:1px solid rgba(244,194,13,.4); }
+  .b-cand { background:rgba(225,6,0,.16); color:#ff6a66; border:1px solid rgba(225,6,0,.45); }
+  .meta { padding:10px 12px 12px; }
+  .fn { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--cream); word-break:break-all; }
+  .desc { color:var(--ash); font-size:13px; margin-top:3px; }
+  .slot { color:var(--green); font-size:12px; margin-top:5px; font-weight:600; }
+  a.full { color:var(--ash); font-size:11.5px; text-decoration:none; border-bottom:1px dotted var(--ash); }
+  footer { color:var(--ash); font-size:12.5px; padding:18px 32px 48px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>giallo-gt — image review &nbsp;<small>Lamborghini Centenario · 18 candidates</small></h1>
+  <p class="hint">Tell me which images to keep (by <b>number</b> or filename), and ideally which slot each should fill.
+  <span style="color:var(--green)">Green = on the page now</span> ·
+  <span style="color:var(--amber)">Amber = graded spare on disk</span> ·
+  <span style="color:#ff6a66">Red = extra candidate, not placed yet</span>.
+  Click any image to open it full-size. (These are the graded/site versions — the look you'll get.)</p>
+</header>
+
+<h2>On the page now <span>— the 10 live slots</span></h2>
+<div class="grid" id="g-live"></div>
+
+<h2>Spares on disk <span>— graded, currently unused</span></h2>
+<div class="grid" id="g-spare"></div>
+
+<h2>More candidates <span>— graded, not placed yet</span></h2>
+<div class="grid" id="g-cand"></div>
+
+<footer>Review sheet generated for selection. Delete <code>public/giallo-review.html</code> + <code>public/_review/</code> when done.</footer>
+
+<script>
+const live = [
+  { n:1,  f:"/cars/giallo-gt.jpg",            slot:"HERO",     d:"Studio front ¾, carbon + yellow accents" },
+  { n:2,  f:"/cars/giallo-gt-g1.jpg",         slot:"Highlight 1", d:"Geneva debut, head-on, crowd (Commons / CC)" },
+  { n:3,  f:"/cars/giallo-gt-rear.jpg",       slot:"Highlight 2", d:"Dead-rear, engine deck + triple exhaust" },
+  { n:4,  f:"/cars/giallo-gt-rear34.jpg",     slot:"Highlight 3", d:"Studio rear ¾, carbon haunches + wing" },
+  { n:5,  f:"/cars/giallo-gt-track-front.jpg",slot:"Highlight 4", d:"REAL on-track front ¾ cornering (TopGear)" },
+  { n:6,  f:"/cars/giallo-gt-exhaust.jpg",    slot:"Feature 1", d:"Triple-exhaust + CENTENARIO badge detail" },
+  { n:7,  f:"/cars/giallo-gt-side.jpg",       slot:"Feature 2", d:"Clean studio side profile" },
+  { n:8,  f:"/cars/giallo-gt-cabin.jpg",      slot:"Feature 3", d:"Wide full cabin interior (your int-1)" },
+  { n:9,  f:"/cars/giallo-gt-storm.jpg",      slot:"Gallery",  d:"Dynamic front ¾ on road, storm sky" },
+  { n:10, f:"/cars/giallo-gt-track-rear.jpg", slot:"Gallery",  d:"REAL on-track rear ¾ at speed (TopGear)" },
+];
+const spare = [
+  { n:11, f:"/cars/giallo-gt-motion.jpg", d:"Dynamic rear ¾ on road (square, lower-res)" },
+  { n:12, f:"/cars/giallo-gt-lawn.jpg",   d:"Concours lawn front ¾ (orange accents — clashes)" },
+  { n:13, f:"/cars/giallo-gt-g2.jpg",     d:"Geneva side profile, crowd (Commons / CC)" },
+];
+const cand = [
+  { n:14, f:"/_review/giallo/giallo-more-2.jpg", d:"Dynamic rear ¾ on road, wing up (16:9)" },
+  { n:15, f:"/_review/giallo/giallo-more-3.jpg", d:"Clean head-on studio (16:9)" },
+  { n:16, f:"/_review/giallo/giallo-more-5.jpg", d:"Dead-rear engine deck (duplicate of #3)" },
+  { n:17, f:"/_review/giallo/giallo-int-2.jpg",  d:"Console detail (yellow trim / blue suede)" },
+  { n:18, f:"/_review/giallo/giallo-int-3.jpg",  d:"Instrument cluster close-up (hex motif)" },
+];
+function card(o, type) {
+  const badge = type==="live" ? '<span class="badge b-slot">on page</span>'
+              : type==="spare" ? '<span class="badge b-spare">spare</span>'
+              : '<span class="badge b-cand">candidate</span>';
+  const slot = o.slot ? `<div class="slot">▸ ${o.slot}</div>` : "";
+  const name = o.f.split("/").pop();
+  return `<div class="card">
+    <div class="imgwrap"><span class="num">${o.n}</span>${badge}<a href="${o.f}" target="_blank"><img loading="lazy" src="${o.f}" alt="${name}"></a></div>
+    <div class="meta"><div class="fn">${name}</div><div class="desc">${o.d}</div>${slot}
+      <div style="margin-top:7px"><a class="full" href="${o.f}" target="_blank">open full size ↗</a></div></div>
+  </div>`;
+}
+document.getElementById("g-live").innerHTML  = live.map(o=>card(o,"live")).join("");
+document.getElementById("g-spare").innerHTML = spare.map(o=>card(o,"spare")).join("");
+document.getElementById("g-cand").innerHTML  = cand.map(o=>card(o,"cand")).join("");
+</script>
+</body>
+</html>

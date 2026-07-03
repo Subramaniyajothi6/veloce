@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>royale-classic — Bugatti Bolide image review</title>
+<style>
+  :root { --night:#0a0a0b; --panel:#141416; --cream:#f2f1ec; --ash:#8e8d86; --line:rgba(255,255,255,.10); --green:#3ddc84; --amber:#f4c20d; --blue:#5b9dff; --grey:#c9c9c9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--night); color:var(--cream); font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
+  header { padding:26px 32px 14px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(10,10,11,.94); backdrop-filter:blur(8px); z-index:5; }
+  h1 { margin:0 0 4px; font-size:22px; }
+  h1 small { color:var(--ash); font-weight:400; font-size:14px; }
+  .hint { color:var(--ash); font-size:13.5px; margin:6px 0 0; max-width:1000px; }
+  .hint b { color:var(--cream); }
+  .slots { margin:10px 0 0; padding:10px 14px; background:var(--panel); border:1px solid var(--line); border-radius:8px; max-width:1000px; font-size:13px; color:var(--ash); }
+  .slots b { color:var(--cream); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:18px; padding:18px 32px 8px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+  .imgwrap { position:relative; height:210px; background:#000; }
+  .imgwrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .num { position:absolute; top:8px; left:8px; background:rgba(0,0,0,.74); border:1px solid var(--line); border-radius:6px; padding:2px 9px; font-weight:700; font-size:14px; }
+  .tag { position:absolute; top:8px; right:8px; font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; text-transform:uppercase; }
+  .t-grey { background:rgba(201,201,201,.16); color:var(--grey); border:1px solid rgba(201,201,201,.4); }
+  .t-blue { background:rgba(91,157,255,.16); color:var(--blue); border:1px solid rgba(91,157,255,.45); }
+  .t-dark { background:rgba(40,40,40,.5); color:#bbb; border:1px solid var(--line); }
+  .meta { padding:9px 12px 12px; }
+  .fn { font-family:ui-monospace,Menlo,monospace; font-size:12px; color:var(--ash); }
+  .desc { color:var(--cream); font-size:13.5px; margin-top:3px; }
+  .kind { color:var(--ash); font-size:12px; margin-top:3px; }
+  a.full { color:var(--ash); font-size:11.5px; text-decoration:none; border-bottom:1px dotted var(--ash); }
+  footer { color:var(--ash); font-size:12.5px; padding:18px 32px 48px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>royale-classic — Bugatti Bolide &nbsp;<small>15 candidates · graded site versions</small></h1>
+  <p class="hint"><b>Two liveries here:</b> <span style="color:var(--grey)">GREY</span> press/track car (TopGear, red accents) and
+  <span style="color:var(--blue)">BLUE</span> EB110-style (carwow). Pick a livery + tell me <b>which number → which slot</b>.
+  More images coming — this is the first batch.</p>
+  <div class="slots"><b>10 slots:</b> HERO · H1 "The W16, with the leash off" · H2 "A Le Mans skeleton" ·
+    H3 "Forty toys, four million each" · H4 "The numbers of a prototype" · F1 "1,600 PS, race fuel only" ·
+    F2 "Morphable aero skin" (the dimpled roof scoop) · F3 "Stripped to the essential" · G1 · G2</div>
+</header>
+
+<div class="grid" id="g"></div>
+<footer>Temp review sheet — graded copies in <code>public/_review/royale-classic/</code>. Delete both when done.</footer>
+
+<script>
+const imgs = [
+  { n:1,  liv:"grey", d:"Side/rear ¾, on track",            k:"dynamic · stance" },
+  { n:2,  liv:"grey", d:"Front head-on, on track",          k:"front" },
+  { n:3,  liv:"grey", d:"Rear wheel + wing (Michelin slick)",k:"aero · detail" },
+  { n:4,  liv:"dark", d:"Rear exhausts + diffuser detail",   k:"aero · detail" },
+  { n:5,  liv:"grey", d:"Cockpit, EB ‘X’ steering wheel",    k:"interior" },
+  { n:6,  liv:"dark", d:"Carbon bucket seats (‘Bolide’)",    k:"interior" },
+  { n:7,  liv:"grey", d:"X-tail rear aero duct, red accent", k:"aero · detail" },
+  { n:8,  liv:"grey", d:"Body / livery panel detail",        k:"detail" },
+  { n:9,  liv:"grey", d:"Side profile, on track",            k:"side · stance" },
+  { n:10, liv:"dark", d:"Rear ¾, big wing, on track",        k:"rear · aero" },
+  { n:11, liv:"dark", d:"Dead rear, backlit garage",         k:"dramatic rear" },
+  { n:12, liv:"blue", d:"Interior, blue seats, doors open",  k:"interior", sug:"F3 — Stripped to the essential" },
+  { n:13, liv:"blue", d:"Cockpit, blue steering wheel",      k:"interior" },
+  { n:14, liv:"blue", d:"Rear ¾, on track (roof scoop + deck)", k:"rear · aero", sug:"F2 — Morphable aero skin*" },
+  { n:15, liv:"blue", d:"Front ¾, garage (pristine)",        k:"front", sug:"H3 — Forty toys, four million each" },
+  { n:16, liv:"blue", d:"Distant, at speed on track",        k:"atmospheric · dynamic" },
+  { n:17, liv:"blue", d:"Front ¾ low, dramatic dark studio", k:"front · HERO-grade", sug:"HERO" },
+  { n:18, liv:"blue", d:"Front, cornering on track",         k:"dynamic front", sug:"H1 — The W16, leash off" },
+  { n:19, liv:"blue", d:"Dead rear, quad exhausts",          k:"rear · engine", sug:"F1 — 1,600 PS, race fuel only" },
+  { n:20, liv:"blue", d:"Rear ¾ in the wet, pit",            k:"dynamic · moody", sug:"G1 — gallery" },
+  { n:21, liv:"blue", d:"Cockpit POV, hands on wheel + display", k:"interior · action" },
+  { n:22, liv:"blue", d:"Side/rear ¾ at speed (COTA)",       k:"dynamic side", sug:"H4 — The numbers of a prototype" },
+  { n:23, liv:"blue", d:"Clean side profile, on track",      k:"side · prototype silhouette", sug:"H2 — A Le Mans skeleton" },
+  { n:24, liv:"blue", d:"Side stance, low, on track",        k:"side · stance", sug:"G2 — gallery" },
+  { n:25, liv:"blue", d:"Rear ¾ in pit lane, moody",         k:"dynamic rear" },
+  { n:26, liv:"blue", d:"Detachable steering wheel, close-up", k:"interior · detail" },
+  { n:27, liv:"grey", d:"Front ¾ at speed, motion blur (16b)", k:"dynamic front · HERO-grade", sug:"HERO (grey)" },
+];
+function card(o) {
+  const f = `/_review/royale-classic/b${String(o.n).padStart(2,"0")}.jpg`;
+  const tag = `<span class="tag t-${o.liv}">${o.liv}</span>`;
+  const sug = o.sug ? `<div style="margin-top:6px;color:var(--green);font-size:12.5px;font-weight:700">★ suggest: ${o.sug}</div>` : "";
+  const ring = o.sug ? "border:1px solid rgba(61,220,132,.55);box-shadow:0 0 0 1px rgba(61,220,132,.25)" : "";
+  return `<div class="card" style="${ring}">
+    <div class="imgwrap"><span class="num">${o.n}</span>${tag}<a href="${f}" target="_blank"><img loading="lazy" src="${f}" alt="b${o.n}"></a></div>
+    <div class="meta"><div class="desc">${o.d}</div><div class="kind">${o.k}</div>${sug}
+      <div style="margin-top:6px"><a class="full" href="${f}" target="_blank">open full size ↗</a></div></div>
+  </div>`;
+}
+document.getElementById("g").innerHTML = imgs.map(card).join("");
+</script>
+</body>
+</html>

@@ -37,7 +37,13 @@ function geometryArea(geo: THREE.BufferGeometry) {
 
 /** Bounding box over opaque meshes only — baked shadow planes, glass and
  *  scattered micro-geometry (stray badges/bolts in found models) must not
- *  define the car's footprint or ground line. */
+ *  define the car's footprint or ground line.
+ *
+ *  setFromObject is called with precise=true: found models often author the
+ *  wheels with a rotation baked into the node transform, and the default
+ *  (non-precise) bound wraps the *rotated geometry's AABB corners*, inflating
+ *  it well below the real tyre — which then floats the whole car off the
+ *  ground. Precise bounds the actual vertices, so the car sits on its tyres. */
 function opaqueBox(root: THREE.Object3D) {
   root.updateMatrixWorld(true);
   const meshes: { mesh: THREE.Mesh; area: number }[] = [];
@@ -55,10 +61,10 @@ function opaqueBox(root: THREE.Object3D) {
   const tmp = new THREE.Box3();
   for (const { mesh, area } of meshes) {
     if (area < total * 0.002) continue;
-    tmp.setFromObject(mesh);
+    tmp.setFromObject(mesh, true);
     box.union(tmp);
   }
-  return box.isEmpty() ? box.setFromObject(root) : box;
+  return box.isEmpty() ? box.setFromObject(root, true) : box;
 }
 
 /**
@@ -157,6 +163,27 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
       });
     }
 
+    /* optional: flat matte recolor of named materials (kills a model's stray
+       accent colour — e.g. neon-green seat belts/calipers — so it doesn't fight
+       the livery). Drops any baked map so a textured accent can't bleed through. */
+    if (model.recolor?.length) {
+      const swaps = model.recolor.map((r) => ({
+        names: r.materials,
+        mat: new THREE.MeshStandardMaterial({
+          color: new THREE.Color(r.color),
+          metalness: 0.3,
+          roughness: 0.6,
+        }),
+      }));
+      c.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh) return;
+        const mat = Array.isArray(m.material) ? m.material[0] : m.material;
+        const hit = mat && swaps.find((s) => s.names.includes(mat.name));
+        if (hit) m.material = hit.mat;
+      });
+    }
+
     /* normalize: face one way, span CAR_LENGTH, sit on y=0, centered */
     c.rotation.y = model.yaw ?? 0;
     const box = opaqueBox(c);
@@ -166,7 +193,7 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
     const center = box2.getCenter(new THREE.Vector3());
     c.position.set(-center.x, -box2.min.y, -center.z);
     return c;
-  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials]);
+  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials, model.recolor]);
 
   return <primitive object={car} />;
 }
@@ -316,7 +343,10 @@ export default function CarCanvas({
       }`}
     >
       <Canvas
-        shadows
+        /* "percentage" = PCFShadowMap. three 0.184 deprecated PCFSoftShadowMap
+           (the default for shadows={true}) and silently falls back to this — so
+           set it explicitly to use the same shadows without the console warning. */
+        shadows="percentage"
         dpr={[1, 2]}
         gl={{ alpha: true }}
         camera={{ fov: 32, position: [5, 1.6, 6.5] }}

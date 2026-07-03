@@ -45,6 +45,10 @@ export interface CarModel3D {
   caliperMaterials?: string[];
   /** Solid color for the brake calipers (e.g. an orange "#ff5a1e"). */
   caliperColor?: string;
+  /** Flat matte recolor of arbitrary named materials — e.g. neutralizing a
+   *  model's stray accent colour (green seat belts / caliper paint) so it
+   *  doesn't fight the chosen livery. No emissive, unlike `caliperColor`. */
+  recolor?: { materials: string[]; color: string }[];
   /** Source + license line (attribution). */
   credit: string;
 }

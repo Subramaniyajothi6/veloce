@@ -3,10 +3,10 @@
 # All hero thumbnails graded via tools/grade-new.mjs (raws in downloads/photos/_raw).
 
 ## Hero thumbnails — real cars matching each 3D model
-royale.jpg                | Bugatti-La-Voiture-Noire-Presentation.jpg            | ZenitsuThu                 | CC BY-SA 4.0
+royale.jpg                | REPLACED 2026-06-29 — see "royale detail set" below       | UNVERIFIED                 | provenance/licence UNVERIFIED — replace before any public deploy
 furia.jpg                 | Ferrari SF90 XX Stradale (54927995184).jpg          | Alexandre Prevot           | CC BY-SA 4.0
 vento-rs.jpg              | user-supplied "Porsche 911 GT3 RS, racetrack" (desktop wallpaper) | provenance/licence UNVERIFIED — replace before any public deploy
-giallo-gt.jpg             | 2016 Lamborghini Centenario LC25.jpg                | MrWalkr                    | CC BY-SA 4.0
+giallo-gt.jpg             | REPLACED 2026-06-29 — see "giallo-gt detail set" below     | Lamborghini (press)        | © all rights reserved — non-commercial demo only (old MrWalkr CC hero preserved as giallo-gt-lawn.jpg)
 notte-v10.jpg             | 2018 Audi R8 Coupe V10 plus Front.jpg               | Vauxford                   | CC BY-SA 4.0
 royale-classic.jpg        | 2024 Bugatti Bolide 3.jpg                           | Calreyn88                  | CC BY-SA 4.0
 furia-classic.jpg         | Ferrari 599XX (8925335369).jpg                     | emperornie                 | CC BY-SA 2.0
@@ -35,6 +35,48 @@ furia-top.jpg      | ferrari.com SF90 XX Stradale, elevated 3/4 cornering | Ferr
 furia-rear.jpg     | ferrari.com SF90 XX Stradale, dead-rear (wing/diffuser) | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
 furia-cabin.jpg    | ferrari.com SF90 XX Stradale, cabin (buckets + harness) | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
 furia-cockpit.jpg  | ferrari.com SF90 XX Stradale, cockpit (wheel + dash)    | Ferrari S.p.A. | © Ferrari, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+
+## royale — Bugatti La Voiture Noire per-car detail set (added 2026-06-29).
+## One-of-one Bugatti show car. These 10 shots were user-supplied local files
+## (public/cars/_incoming/local-*.jpg) + web image downloads (web-*.jpg), graded via
+## tools/grade-royale.mjs from downloads/photos/_raw/royale-*.jpg. Exact source URLs /
+## authors were NOT recorded at download time — provenance & licence UNVERIFIED. Treat as
+## © respective owners (Bugatti press / motor-show photography), non-commercial demo use
+## only, NOT cleared for public deploy. Replace with verified-source images before any deploy.
+royale.jpg          | studio front 3/4 elevated (hero + thumbnail)            | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-top.jpg      | overhead top-down, carbon roof surface                  | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-rear34.jpg   | studio rear 3/4                                         | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-location.jpg | outdoor front 3/4 on location                          | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-head-on.jpg  | head-on front                                          | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-rear.jpg     | direct rear, six exhausts                              | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-exhaust.jpg  | rear detail, titanium tailpipes                        | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-detail.jpg   | front detail, grille + wheel + cabin                   | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-mood.jpg     | ultra-dark glowing full-width taillight                | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+royale-spine.jpg    | high-angle rear, carbon dorsal spine                   | UNVERIFIED | provenance/licence UNVERIFIED — replace before any public deploy
+
+## giallo-gt — Lamborghini Centenario press + track set (added 2026-06-29, expanded same day).
+## Carbon-fibre / yellow launch livery; 3D model stays carbon-grey (#34343b) to match — no recolour.
+## Sources: lamborghini.com official press (studio + 2019 news set), topgear.com track review, and a
+## Lamborghini interior press shot (re-hosted on a shopify CDN). All © their owners — non-commercial
+## demo use only, NOT cleared for public deploy. The 10 PAGE slots are the new/press shots below.
+## On disk but NO LONGER referenced (kept as spares): giallo-gt-lawn.jpg (MrWalkr CC BY-SA 4.0,
+## former hero), giallo-gt-g2.jpg (Ghoster CC BY-SA 4.0), giallo-gt-motion.jpg. giallo-gt-g1.jpg
+## (Ghoster CC BY-SA 4.0) IS still used (H1, the debut highlight).
+giallo-gt.jpg         | lamborghini.com Centenario, studio front 3/4 elevated (hero)        | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-rear.jpg    | lamborghini.com Centenario, dead-rear engine deck + triple exhaust   | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-rear34.jpg  | lamborghini.com Centenario, studio rear 3/4 (wing + diffuser)        | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-exhaust.jpg | lamborghini.com Centenario, triple-exhaust + CENTENARIO badge detail | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-motion.jpg  | lamborghini.com Centenario, dynamic rear 3/4 on road, wing raised    | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-cabin.jpg   | Lamborghini Centenario, wide full cabin (dash + wheel + cluster + console) [shopify-CDN copy] | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-storm.jpg   | lamborghini.com 2019 news set, dynamic front 3/4 on road, storm sky | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-side.jpg    | lamborghini.com 2019 news set, clean studio side profile            | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-track-front.jpg | topgear.com Centenario track review, on-track front 3/4 cornering | TopGear / BBC Studios (Immediate Media) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-track-rear.jpg  | topgear.com Centenario track review, on-track rear 3/4 at speed   | TopGear / BBC Studios (Immediate Media) | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-headon.jpg      | lamborghini.com 2019 news set, clean head-on studio (H1)            | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-rear-road.jpg   | lamborghini.com 2019 news set, dynamic rear 3/4 on road, wing up (H3) | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-console.jpg     | Lamborghini Centenario, centre-console detail (drive-mode selector) [supercars.net copy] | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-cluster.jpg     | Lamborghini Centenario, digital instrument cluster (hex motif) [supercars.net copy]      | Automobili Lamborghini S.p.A. | © Lamborghini, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+giallo-gt-lawn.jpg    | (former hero, now unused spare) 2016 Lamborghini Centenario LC25.jpg | MrWalkr                      | CC BY-SA 4.0
 giallo-gt-g1.jpg / giallo-gt-g2.jpg | 2016-03-01 Geneva Motor Show G078.JPG / G082.JPG                 | Ghoster                      | CC BY-SA 4.0
 notte-v10-g1.jpg / notte-v10-g2.jpg | 2016 Audi R8 Plus 1.jpg / Audi R8 V10 Decennium.jpg             | Calreyn88 / Alexandre Prevot | CC BY-SA 4.0
 
@@ -47,3 +89,34 @@ tempesta-v12-2.jpg / tempesta-v12-3.jpg | Toyota Supra A80 (various).jpg        
 giallo-gt-2.jpg / giallo-gt-3.jpg       | BMW M8 (various).jpg                          | Ghostofakina / Alexander Migl | CC BY-SA 4.0
 notte-v10-2.jpg / notte-v10-3.jpg       | Dodge Challenger RT Shaker / SRT.jpg          | Elise240SX / McChizzle | CC BY-SA 4.0 / PD
 volt-zero-2.jpg / volt-zero-3.jpg       | Tesla Roadster 2020 (various).jpg            | Steve Jurvetson / Editor928 | CC BY 2.0 / CC BY-SA 4.0
+
+## furia-classic (Ferrari 599XX) press + auction set — graded via tools/grade-furia-classic.mjs (2026-06-30).
+## Copyrighted press/auction imagery, non-commercial demo only — NOT cleared for public deploy.
+## NOTE: static/detail shots are RM Sotheby's car #44 (599XX "Programme"); track shots are a #95 car at Spa (livery stripe differs slightly).
+furia-classic-headon.jpg      | RM Sotheby's listing, 599XX "Programme" #44 — static front head-on (HERO) | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic.jpg             | Ferrari 599XX #37 (red/yellow), at speed on track — old original, now UNUSED | provenance UNVERIFIED (original repo image) | © owner, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-rear.jpg        | RM Sotheby's listing, 599XX #44 — static rear 3/4 (fixed wing + diffuser) | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-engine.jpg      | RM Sotheby's listing, 599XX #44 — V12 engine bay, hood open               | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-detail.jpg      | RM Sotheby's listing, 599XX #44 — bonnet "599XX Programme" badge detail   | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-cockpit.jpg     | RM Sotheby's listing, 599XX #44 — cockpit (wheel + roll cage) (gallery) | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-rollcage.jpg    | RM Sotheby's listing, 599XX #44 — stripped front structure, roll cage + electronics (gallery) [low-res 768px source] | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-cluster.jpg     | RM Sotheby's listing, 599XX #44 — digital instrument cluster / telemetry display (H3) [low-res 768px source] | RM Sotheby's / consignor photographer | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-track-front.jpg | ferrari.com CDN (Corse Clienti / XX), 599XX #95 on track at Spa — front 3/4 cornering | © Ferrari S.p.A. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-track-side.jpg  | ferrari.com CDN (Corse Clienti / XX), 599XX #95 on track at Spa — side/rear 3/4 at speed | © Ferrari S.p.A. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+furia-classic-cabin.jpg       | supercars.agent4stars.com (2013), 599XX carbon dashboard + manettino detail | provenance UNVERIFIED (agent4stars) | © owner, all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+
+=== royale-classic (Bugatti Bolide) — 2026-06-30 ===
+NOTE: mixed source — TopGear review gallery (grey press car, red accents) for the detail/highlight/feature slots,
+plus Bugatti press shots (blue car) for the hero + gallery. Liveries intentionally mixed per user direction
+(hero + gallery blue to match the 3D model; details from the grey press set).
+royale-classic-hero.jpg     | Bugatti press, "02_bolide_front_print" — blue front 3/4, low (HERO) | © Bugatti Automobiles S.A.S. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-seats.jpg    | topgear.com Bolide review 2025 (#12) — carbon bucket seats (H1) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-cockpit.jpg  | topgear.com Bolide review 2025 (#11) — cockpit, removable wheel (H2) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-aero.jpg     | topgear.com Bolide review 2025 (#19) — X-tail rear aero duct, red accent (H3) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-panel.jpg    | topgear.com Bolide review 2025 (#20) — body/livery panel detail (H4) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-exhaust.jpg  | topgear.com Bolide review 2025 (#10) — twin exhausts + diffuser (F1) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-wing.jpg     | topgear.com Bolide review 2025 (#9) — rear wheel + wing, Michelin slick (F2) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-rear.jpg     | topgear.com Bolide review 2025 (#24) — rear 3/4 on track, big wing (F3) | © TopGear / BBC Studios | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-wheel.jpg    | Bugatti/carwow press, "bugatti_bolide_interior_1" — detachable steering wheel + display (F4) | © Bugatti Automobiles S.A.S. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-corner.jpg   | Bugatti press, "06 Feeling-the-Track-Miami" — blue Bolide cornering on track (G1) | © Bugatti Automobiles S.A.S. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy
+royale-classic-pov.jpg      | Bugatti press, "07 Feeling-the-Track-Miami" — cockpit POV, hands on wheel (G2) | © Bugatti Automobiles S.A.S. | © all rights reserved — non-commercial demo use only, NOT cleared for public deploy

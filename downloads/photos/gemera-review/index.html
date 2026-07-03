@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gemera photo review — VELOCE</title>
+<style>
+  :root{
+    --bg:#0c0d10; --panel:#15171c; --panel2:#1b1e25; --line:#2a2e37;
+    --ink:#e9ecf1; --dim:#9aa2b1; --faint:#6b7280;
+    --green:#2f7d5b; --grey:#8b93a1; --yellow:#d4a017; --neutral:#5a6270; --x:#b3402f;
+    --a1:#37d081; --a:#5ec96b; --am:#a7c94f; --bp:#e0b23a; --b:#d98a34; --c:#c86a5a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:#7db6ff}
+  .wrap{max-width:1240px;margin:0 auto;padding:34px 24px 80px}
+  h1{font-size:28px;letter-spacing:.02em;margin:0 0 6px;font-weight:700}
+  h1 span{color:var(--faint);font-weight:400}
+  .sub{color:var(--dim);margin:0 0 22px;max-width:760px}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.16em;color:var(--dim);
+    margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .notes{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 18px;margin:0 0 8px;color:var(--dim)}
+  .notes b{color:var(--ink)}
+  .notes ul{margin:8px 0 0;padding-left:18px}
+  .notes li{margin:4px 0}
+
+  /* recommended lineup */
+  .lineup{display:grid;grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:16px}
+  .slot{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .slot .ph{position:relative;aspect-ratio:16/9;background:#000}
+  .slot img{width:100%;height:100%;object-fit:cover;display:block}
+  .slot .role{position:absolute;left:8px;top:8px;background:#000a;backdrop-filter:blur(3px);
+    border:1px solid #ffffff22;color:#fff;font-size:11px;letter-spacing:.06em;
+    padding:3px 8px;border-radius:999px;text-transform:uppercase}
+  .slot .meta{padding:10px 12px 13px}
+  .slot .field{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:#7db6ff}
+  .slot .why{color:var(--dim);font-size:12.5px;margin-top:4px}
+  .slot .fn{color:var(--faint);font-size:11px;margin-top:6px;font-family:ui-monospace,monospace}
+
+  /* full graded grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    display:flex;flex-direction:column}
+  .card.pick{border-color:#37d08155;box-shadow:0 0 0 1px #37d08133 inset}
+  .card.excl{opacity:.62}
+  .card .ph{position:relative;aspect-ratio:16/9;background:#000}
+  .card img{width:100%;height:100%;object-fit:cover;display:block}
+  .grade{position:absolute;right:8px;top:8px;font-weight:800;font-size:13px;
+    padding:3px 9px;border-radius:8px;color:#0c0d10;letter-spacing:.02em}
+  .pickflag{position:absolute;left:8px;top:8px;background:#37d081;color:#0c0d10;
+    font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:999px}
+  .card .body{padding:11px 13px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .fn2{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--ink)}
+  .slotlbl{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--dim)}
+  .note{font-size:12.5px;color:var(--dim);line-height:1.45}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+  .tag{font-size:10.5px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;color:var(--dim);font-size:12.5px;margin:2px 0 4px}
+  .legend b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Koenigsegg Gemera — photo review <span>· 34 images · VELOCE flagship slot</span></h1>
+  <p class="sub">Every supplied image, graded on quality and scored to the best slot on the car page
+  (<code>src/data/cars.ts</code>: <code>image</code> hero, <code>gallery</code>, <code>highlights</code>, <code>features</code>).
+  The recommended lineup is one coherent palette; alternates and off-palette shots follow.</p>
+
+  <div class="notes">
+    <b>Read first</b>
+    <ul>
+      <li><b>Palette:</b> your set has a <span style="color:var(--green)">green + tan</span> show car, a <span style="color:var(--grey)">silver + yellow</span> car, and <span style="color:var(--neutral)">black engine cutaways</span>. Recommended lineup = green + tan + black engine (most shots, most dramatic, best fit for the site's dark grade).</li>
+      <li><b>Excluded:</b> <code>kc-4</code> is a <b>Pininfarina Battista</b>, not a Gemera — dropped.</li>
+      <li><b>White-studio shots</b> (the "stand"/"studio" green ones) will be tone-graded darker to match the site; pure-white backgrounds go mid-grey, so I lean on the moody road/runway/dark-studio shots for the hero.</li>
+      <li><b>Provenance:</b> press/dealer photos (TopGear, Koenigsegg Chicago, Supervettura) — not CC-licensed like your Wikimedia shots. Fine for a portfolio; sources are recorded.</li>
+    </ul>
+  </div>
+
+  <h2>Recommended lineup — Green + Tan (10 slots)</h2>
+  <div class="lineup" id="lineup"></div>
+
+  <h2>All 34 images, graded</h2>
+  <div class="legend">
+    <span><b>Grades:</b></span>
+    <span><span class="dot" style="background:var(--a1)"></span>A+ hero-grade</span>
+    <span><span class="dot" style="background:var(--a)"></span>A excellent</span>
+    <span><span class="dot" style="background:var(--am)"></span>A− strong</span>
+    <span><span class="dot" style="background:var(--bp)"></span>B+ good</span>
+    <span><span class="dot" style="background:var(--b)"></span>B usable</span>
+    <span><span class="dot" style="background:var(--c)"></span>C niche</span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const G = {'A+':'--a1','A':'--a','A-':'--am','B+':'--bp','B':'--b','C+':'--c','C':'--c','—':'--faint'};
+const PAL = {green:'--green',grey:'--grey',yellow:'--yellow',tan:'#b07a3a',neutral:'--neutral',x:'--x'};
+const cv = v => v.startsWith('--') ? `var(${v})` : v;
+
+const data = [
+ {f:'sv-g5',       s:'Supervettura',       r:'1920×1080', g:'A+', slot:'HERO',                 pal:'green',   pick:1, field:'image', why:'Green front ¾ against a dark building — moody, cinematic, the classic hero angle. Best match for the dark grade.'},
+ {f:'tg-runway-157',s:'TopGear',           r:'1784×1004', g:'A',  slot:'Gallery',              pal:'green',   pick:1, field:'gallery[0]', why:'Rear ¾ at speed, roof scoop visible, overcast sky. Dynamic beauty shot.'},
+ {f:'tg-bahn-359', s:'TopGear',            r:'1784×1004', g:'A',  slot:'Gallery',              pal:'green',   pick:1, field:'gallery[1]', why:'Side pan on track with motion blur — energy + full profile.'},
+ {f:'sv-g6',       s:'Supervettura',       r:'1920×1080', g:'A',  slot:'Highlight — doors',    pal:'green',   pick:1, field:'highlights[0]', why:'Top-down front with both synchro-helix doors open. The Gemera signature move.'},
+ {f:'tg-studio-389',s:'TopGear',           r:'1784×1004', g:'A',  slot:'Highlight — 4 seats',  pal:'green',   pick:1, field:'highlights[1]', why:'Through the open door: all four seats + “Gemera” sill, green body framing. Best “it seats four”.'},
+ {f:'tg-stand-6',  s:'TopGear',            r:'1784×1004', g:'A',  slot:'Highlight — design',   pal:'green',   pick:1, field:'highlights[2]', why:'Clean front ¾ studio, gold wheels. Strong design beat (white bg → graded darker).'},
+ {f:'tg-runway-1', s:'TopGear',            r:'1784×1004', g:'A',  slot:'Highlight — runway',   pal:'green',   pick:1, field:'highlights[3]', why:'Front head-on at dawn on the runway, dramatic sky. Doubles as an alt hero.'},
+ {f:'sv-g11',      s:'Supervettura',       r:'1920×1080', g:'A',  slot:'Feature — engine',     pal:'neutral', pick:1, field:'features[0]', why:'Powertrain X-ray on black — the triple + e-motors. Fits the dark theme perfectly.'},
+ {f:'tg-studio-392',s:'TopGear',           r:'1784×1004', g:'A',  slot:'Feature — cockpit',    pal:'tan',     pick:1, field:'features[1]', why:'Alcantara wheel + digital cluster in SPORT. Tech/detail hero.'},
+ {f:'tg-studio-386',s:'TopGear',           r:'1784×1004', g:'A',  slot:'Feature — cabin',      pal:'tan',     pick:1, field:'features[2]', why:'Four full seats from behind, tan leather — the 2+2 story, straight on.'},
+
+ {f:'tg-factory-5',s:'TopGear',            r:'1784×1004', g:'A-', slot:'Alt — brand moment',   pal:'green',   why:'Green ¾ + smoke under a giant “Koenigsegg” sign. Stunning, but the wordmark clashes with VELOCE — use only if OK with that.'},
+ {f:'kc-5',        s:'Koenigsegg Chicago', r:'1920×1000', g:'A-', slot:'Alt hero — silver',    pal:'grey',    why:'Production silver front ¾ on grey gradient. The hero if you go SILVER + YELLOW instead of green.'},
+ {f:'sv-g1',       s:'Supervettura',       r:'1140×642',  g:'A-', slot:'Alt hero — grey',      pal:'grey',    why:'Grey front ¾ on dark concrete — great moody hero for a silver build. Lower res (0.7 MP).'},
+ {f:'tg-runway-159',s:'TopGear',           r:'1784×1004', g:'A-', slot:'Alt gallery',          pal:'green',   why:'Side ¾ at speed, gold wheels. Great; background slightly busy.'},
+ {f:'tg-bahn-360', s:'TopGear',            r:'1784×1004', g:'A-', slot:'Alt gallery',          pal:'green',   why:'Rear ¾ pan on track — near-dup of runway-157’s energy.'},
+ {f:'sv-g12',      s:'Supervettura',       r:'1920×1080', g:'A-', slot:'Alt feature — engine', pal:'neutral', why:'Powertrain from top-rear on black. Backup to sv-g11.'},
+ {f:'tg-stand-5',  s:'TopGear',            r:'1784×1004', g:'A-', slot:'Alt highlight — profile',pal:'green', why:'Elevated profile, doors shut. Clean but white bg.'},
+ {f:'sv-g7',       s:'Supervettura',       r:'1920×1080', g:'A-', slot:'Alt highlight — profile',pal:'green', why:'Near-dup of stand-5, slightly higher res.'},
+ {f:'tg-stand-3',  s:'TopGear',            r:'1784×1004', g:'A-', slot:'Alt highlight — doors',pal:'green',   why:'Crane front, doors open — near-dup of sv-g6.'},
+
+ {f:'tg-runway-2', s:'TopGear',            r:'1784×1004', g:'B+', slot:'Gallery — rear',       pal:'green',   why:'Rear head-on on runway, dramatic sky. Shows the twin-tier tail.'},
+ {f:'sv-g8',       s:'Supervettura',       r:'1920×1080', g:'B+', slot:'Highlight — rear doors',pal:'green',  why:'Rear ¾ with doors up (higher-res dup of stand-1).'},
+ {f:'tg-stand-1',  s:'TopGear',            r:'1784×1004', g:'B+', slot:'Highlight — rear doors',pal:'green',  why:'Rear ¾ doors up, white bg — dup of sv-g8.'},
+ {f:'sv-g10',      s:'Supervettura',       r:'1920×1080', g:'B+', slot:'Feature — console',    pal:'tan',     why:'Centre console + twin screens, symmetric (higher-res dup of studio-388).'},
+ {f:'tg-studio-388',s:'TopGear',           r:'1784×1004', g:'B+', slot:'Feature — console',    pal:'tan',     why:'Centre console + twin screens — dup of sv-g10.'},
+ {f:'sv-g9',       s:'Supervettura',       r:'1920×1080', g:'B+', slot:'Feature — cabin',      pal:'tan',     why:'Higher-res dup of the picked studio-386.'},
+ {f:'kc-1',        s:'Koenigsegg Chicago', r:'1920×1000', g:'B+', slot:'Highlight — 4 seats',  pal:'yellow',  why:'Full cabin side, yellow trim + Swedish flag. Clearest 4-seat read, but yellow interior.'},
+ {f:'kc-6',        s:'Koenigsegg Chicago', r:'1920×1000', g:'B+', slot:'Feature — cockpit',    pal:'yellow',  why:'Dead-on cockpit, yellow — great symmetry for the silver+yellow palette.'},
+ {f:'sv-g4',       s:'Supervettura',       r:'1140×642',  g:'B+', slot:'Feature — cockpit',    pal:'yellow',  why:'¾ cockpit, yellow accents, moody. Low res (0.7 MP).'},
+ {f:'sv-6',        s:'Supervettura',       r:'1500×900',  g:'B+', slot:'Feature — exhaust',    pal:'grey',    why:'Exhaust-tip macro (grey car). Nice detail, off-palette if green.'},
+ {f:'kc-3',        s:'Koenigsegg Chicago', r:'1920×1000', g:'B+', slot:'Gallery — grey',       pal:'grey',    why:'Grey rear ¾ action on a wet track. Good, but off-palette if green.'},
+
+ {f:'tg-stand-2',  s:'TopGear',            r:'1784×1004', g:'B',  slot:'Highlight — rear aero',pal:'green',   why:'Rear head-on, doors up, diffuser + exhausts. White bg.'},
+ {f:'tg-studio-383',s:'TopGear',           r:'1784×1004', g:'B',  slot:'Feature — detail',     pal:'tan',     why:'Rear-cabin quarter, screen + seats. Busier, less clean composition.'},
+ {f:'sv-g3',       s:'Supervettura',       r:'1140×642',  g:'C+', slot:'Detail — mirror cam',  pal:'grey',    why:'Camera-mirror close-up. Niche; low res.'},
+
+ {f:'tg-4685', s:'TopGear · Geneva', r:'1784×1004', g:'A',  slot:'Hero — silver (dark)',  pal:'grey',    why:'Front head-on, both doors up, spotlit on a black stand — the best DARK silver hero. Now the Silver·Yellow hero.'},
+ {f:'tg-4662', s:'TopGear · Geneva', r:'1784×1004', g:'A',  slot:'Highlight — doors',     pal:'grey',    why:'Front ¾ with doors open on a dark stand — dramatic and on-theme.'},
+ {f:'tg-4947', s:'TopGear · Geneva', r:'1784×1004', g:'A',  slot:'Highlight — 4 seats',   pal:'yellow',  why:'Four yellow seats through the open door, dark surround. Best dark 4-seat shot in the set.'},
+ {f:'tg-4807', s:'TopGear · Geneva', r:'1784×1004', g:'A',  slot:'Feature — engine bay',  pal:'neutral', why:'Real carbon engine bay with the Koenigsegg “X” + twin exhausts — beats the X-ray for “in the metal”.'},
+ {f:'tg-5099', s:'TopGear · Geneva', r:'1784×1004', g:'A-', slot:'Feature — cockpit',     pal:'yellow',  why:'Wheel + Koenigsegg boss + twin screens, yellow accents, moody.'},
+ {f:'tg-4671', s:'TopGear · Geneva', r:'1784×1004', g:'A-', slot:'Highlight — rear/aero', pal:'grey',    why:'Rear ¾, diffuser + yellow taillight, dark stand.'},
+ {f:'tg-4668', s:'TopGear · Geneva', r:'1784×1004', g:'A-', slot:'Overview — front ¾',    pal:'grey',    why:'Clean grey front ¾ on the dark stand. Now the Silver·Yellow overview + Mix hero.'},
+ {f:'tg-4660', s:'TopGear · Geneva', r:'1784×1004', g:'A-', slot:'Highlight — profile',   pal:'grey',    why:'Profile with doors up, dark. Slight white-car intrusion bottom-right.'},
+ {f:'tg-4952', s:'TopGear · Geneva', r:'1784×1004', g:'B+', slot:'Feature — cabin',       pal:'yellow',  why:'Cabin through the door — wheel + seats. Small “RAW” watermark in the corner.'},
+ {f:'tg-4667', s:'TopGear · Geneva', r:'1600×900',  g:'B+', slot:'Detail — front design', pal:'grey',    why:'Tight front ¾ with a sister car behind. Foreground blur; strong design read.'},
+ {f:'tg-4800', s:'TopGear · Geneva', r:'1784×1004', g:'B',  slot:'Gallery — rear',        pal:'grey',    why:'Rear ¾ from the other side; a white car crowds the foreground. Backup.'},
+
+ {f:'kc-4',        s:'Koenigsegg Chicago', r:'1920×1000', g:'—',  slot:'EXCLUDE',              pal:'x', excl:1, why:'Not a Gemera — this is a Pininfarina Battista (purple, different face). Wrong car; drop it.'},
+];
+
+const lineup = document.getElementById('lineup');
+data.filter(d=>d.pick).forEach(d=>{
+  const el=document.createElement('div'); el.className='slot';
+  el.innerHTML=`<div class="ph"><span class="role">${d.slot}</span><img loading="lazy" src="thumbs/${d.f}.jpg" alt="${d.f}"></div>
+    <div class="meta"><div class="field">${d.field}</div><div class="why">${d.why}</div><div class="fn">${d.f}.jpg · ${d.s} · ${d.r}</div></div>`;
+  lineup.appendChild(el);
+});
+
+const grid=document.getElementById('grid');
+data.forEach(d=>{
+  const el=document.createElement('div'); el.className='card'+(d.pick?' pick':'')+(d.excl?' excl':'');
+  el.innerHTML=`<div class="ph">
+      ${d.pick?'<span class="pickflag">✓ PICKED</span>':''}
+      <span class="grade" style="background:${cv(G[d.g])}">${d.g}</span>
+      <img loading="lazy" src="thumbs/${d.f}.jpg" alt="${d.f}"></div>
+    <div class="body">
+      <div class="top"><span class="fn2">${d.f}.jpg</span><span class="slotlbl">${d.slot}</span></div>
+      <div class="note">${d.why}</div>
+      <div class="tags">
+        <span class="tag"><span class="dot" style="background:${cv(PAL[d.pal])}"></span>${d.pal}</span>
+        <span class="tag">${d.s}</span>
+        <span class="tag">${d.r}</span>
+      </div>
+    </div>`;
+  grid.appendChild(el);
+});
+</script>
+</body>
+</html>
