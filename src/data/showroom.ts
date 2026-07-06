@@ -73,22 +73,4 @@ export const showroomCars: ShowroomCar[] = [
     image: "/cars/furia-classic-headon.jpg",
     alt: "Red Ferrari 599XX, front head-on",
   },
-  {
-    slug: "tempesta-v12-classic",
-    name: "Toyota Supra Mk4",
-    price: "€110,000",
-    specHp: "326 HP",
-    specRest: "4.9 S / 285 KM/H",
-    image: "/cars/tempesta-v12-classic.jpg",
-    alt: "Red Mk4 Toyota Supra (A80)",
-  },
-  {
-    slug: "notte-v10-classic",
-    name: "Dodge Challenger R/T",
-    price: "€45,000",
-    specHp: "375 HP",
-    specRest: "5.4 S / 250 KM/H",
-    image: "/cars/notte-v10-classic.jpg",
-    alt: "Orange Dodge Challenger R/T Shaker",
-  },
 ];

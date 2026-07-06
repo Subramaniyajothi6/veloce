@@ -34,6 +34,32 @@ export const cars: CarProfile[] = [
         "lavoiturecsr2_textured2a__spec",
         "lavoiturecsr2_textureda__env_50_spec",
       ],
+      /* white rear BUGATTI script + silver EB deck badge (press-shot look).
+         The visible glyphs are the "light" slot's 7 overlay islands — the
+         "coloured" slot ALSO has letter bases + the hex backing band in the
+         same region, which must stay dark (painting them reads as a silver
+         band behind the letters, not white lettering). The EB badge is one
+         379-tri island in "coloured" at y 15–16.6. Boxes are in the GLB's
+         raw space, measured via cluster probe. Emissive lift because the
+         rear-facing glyph faces get almost no scene light. */
+      partRecolor: [
+        {
+          material: "lavoiturecsr2_light__env_50_spec",
+          box: [[-13, 6.5, 98.5], [13, 10.2, 102.5]],
+          color: "#C0C0C0",
+          metalness: 0.2,
+          roughness: 0.45,
+          emissive: 0.25,
+        },
+        {
+          material: "lavoiturecsr2_coloured__env_50_spec",
+          box: [[-3, 14.5, 100], [3.5, 16.6, 103.6]],
+          color: "#C0C0C0",
+          metalness: 0.6,
+          roughness: 0.35,
+          emissive: 0.1,
+        },
+      ],
       credit: "Bugatti La Voiture Noire by SINNIK — Sketchfab, CC BY 4.0",
     },
     specs: [
@@ -725,162 +751,6 @@ export const cars: CarProfile[] = [
         copy: "Behind the nose, a welded roll cage and banks of data-acquisition electronics fill what would be the luggage bay. The 599XX was Ferrari's rolling test bed — the systems proven here shaped the road cars that followed.",
         image: "/cars/furia-classic-rollcage.jpg",
         stat: { value: "29", label: "development cars" },
-      },
-    ],
-  },
-  {
-    slug: "tempesta-v12-classic",
-    name: "Toyota Supra Mk4",
-    category: "Sports Coupé",
-    price: "€110,000",
-    tagline: "The tuner's holy grail.",
-    description:
-      "The A80 Supra: a 3.0-litre twin-turbo 2JZ-GTE inline-six in a front-engine, rear-drive coupé with a basket-handle rear wing. Famously over-built — the engine bottom end is good for four-figure power.",
-    image: "/cars/tempesta-v12-classic.jpg",
-    alt: "Red Mk4 Toyota Supra (A80), front three-quarter",
-    paint: "#b81f2a",
-    model: {
-      url: "/models-old/tempesta-v12.glb",
-      repaint: true,
-      credit: "Toyota Supra MK4 — via github.com/Vivekkk-1/3D-Models",
-    },
-    specs: [
-      { value: 326, unit: "HP", label: "Power", detail: "3.0-litre twin-turbo 2JZ-GTE inline-six." },
-      { value: 4.9, decimals: 1, unit: "S", label: "0–100 km/h", detail: "Six-speed Getrag manual." },
-      { value: 285, unit: "KM/H", label: "Top speed", detail: "Derestricted; 250 km/h as sold." },
-      { value: 451, unit: "NM", label: "Torque", detail: "Sequential twin-turbos, near-flat delivery." },
-      { value: 3.0, decimals: 1, unit: "L", label: "Displacement", detail: "The legendary 2JZ." },
-      { value: 1570, unit: "KG", label: "Kerb weight", detail: "Front-engine, rear-drive." },
-    ],
-    gallery: [
-      { src: "/cars/tempesta-v12-2.jpg", alt: "Supra side profile", caption: "Profile" },
-      { src: "/cars/tempesta-v12-3.jpg", alt: "Supra at a meet", caption: "On location" },
-    ],
-    track: [
-      { label: "Quarter mile", value: "13.1 S", note: "Stock, export turbo" },
-      { label: "100–0 km/h", value: "34.0 M", note: "Period road tyres" },
-      { label: "Tuning ceiling", value: "1000+ HP", note: "On the standard block" },
-    ],
-    highlights: [
-      {
-        title: "The legend is the engine",
-        copy: "The 2JZ-GTE: a cast-iron 3.0-litre straight-six so over-built it shrugs off four-figure power on its standard block. No engine has earned more respect from tuners.",
-        image: "/cars/tempesta-v12-classic.jpg",
-      },
-      {
-        title: "Sequential twin turbos",
-        copy: "Two turbochargers hand off one to the next — the first for low-down response, the second for top-end punch — giving boost early and a torque curve that barely dips.",
-        image: "/cars/tempesta-v12-2.jpg",
-      },
-      {
-        title: "The tuner's holy grail",
-        copy: "No car has been modified more often or more famously. The A80 is the blank canvas of the import scene, as desirable stock as it is built.",
-        image: "/cars/tempesta-v12-3.jpg",
-      },
-      {
-        title: "Front engine, rear drive, basket handle",
-        copy: "A classic grand-touring layout under that unmistakable basket-handle wing — long bonnet, driven rear wheels, and balance that flatters every driver.",
-        image: "/cars/tempesta-v12-classic.jpg",
-      },
-    ],
-    features: [
-      {
-        title: "An engine built for ten times its job",
-        copy: "The 2JZ's closed-deck iron block and forged internals were engineered with enormous margin. Where it left the factory at 326 hp, tuners routinely find 1,000-plus on the original block.",
-        image: "/cars/tempesta-v12-2.jpg",
-        stat: { value: "1,000+ HP", label: "on the standard block" },
-      },
-      {
-        title: "Sequential boost",
-        copy: "The twin turbos spool in sequence — one for instant response, the second taking over up top — so torque arrives early and never sags through the rev range.",
-        image: "/cars/tempesta-v12-3.jpg",
-        stat: { value: "451 NM", label: "near-flat delivery" },
-      },
-      {
-        title: "Built like an anvil",
-        copy: "A Getrag six-speed manual, rear-drive balance and a deliberately over-engineered chassis are why the A80 became a thirty-year icon rather than a footnote.",
-        image: "/cars/tempesta-v12-classic.jpg",
-        stat: { value: "1,570 KG", label: "kerb weight" },
-      },
-    ],
-  },
-  {
-    slug: "notte-v10-classic",
-    name: "Dodge Challenger R/T",
-    category: "Muscle Car",
-    price: "€45,000",
-    tagline: "Old-school, on purpose.",
-    description:
-      "A two-tonne retro brawler: the 5.7-litre HEMI V8 R/T with the cold-air Shaker hood scoop poking through the bonnet. Built to look and sound exactly like a 1970 muscle car, on modern underpinnings.",
-    image: "/cars/notte-v10-classic.jpg",
-    alt: "Orange Dodge Challenger R/T Shaker, front three-quarter",
-    paint: "#e8631a",
-    model: {
-      url: "/models-old/notte-v10.glb",
-      repaint: true,
-      bodyMaterials: [
-        "dDodge_ChallengerRTShakerF7_2015Paint_Material1",
-        "dDodge_ChallengerRTShakerF7_2015Coloured_Material1",
-      ],
-      credit: "Dodge Challenger R/T — via github.com/Vivekkk-1/3D-Models",
-    },
-    specs: [
-      { value: 375, unit: "HP", label: "Power", detail: "5.7-litre HEMI V8 with Shaker cold-air hood." },
-      { value: 5.4, decimals: 1, unit: "S", label: "0–100 km/h", detail: "8-speed auto or 6-speed manual." },
-      { value: 250, unit: "KM/H", label: "Top speed", detail: "Electronically governed." },
-      { value: 556, unit: "NM", label: "Torque", detail: "Big, lazy, American low-end shove." },
-      { value: 5.7, decimals: 1, unit: "L", label: "Displacement", detail: "Two valves per cylinder, all attitude." },
-      { value: 1880, unit: "KG", label: "Kerb weight", detail: "A retro muscle coupé." },
-    ],
-    gallery: [
-      { src: "/cars/notte-v10-2.jpg", alt: "Challenger front three-quarter", caption: "Front three-quarter" },
-      { src: "/cars/notte-v10-3.jpg", alt: "Challenger interior", caption: "Cabin" },
-    ],
-    track: [
-      { label: "Quarter mile", value: "13.8 S", note: "5.7 HEMI, stock" },
-      { label: "100–0 km/h", value: "37.0 M", note: "Two tonnes to stop" },
-      { label: "Soundtrack", value: "HEMI V8", note: "The whole point" },
-    ],
-    highlights: [
-      {
-        title: "Old-school, on purpose",
-        copy: "Styled, tuned and trimmed to look, sound and feel like a 1970 muscle car — riding on thoroughly modern underpinnings that the period car could never have dreamed of.",
-        image: "/cars/notte-v10-classic.jpg",
-      },
-      {
-        title: "The Shaker hood",
-        copy: "A cold-air scoop bolted straight to the engine pokes through the bonnet and shakes with every blip of the V8 — function and theatre in one defiantly retro gesture.",
-        image: "/cars/notte-v10-2.jpg",
-      },
-      {
-        title: "HEMI V8, the real thing",
-        copy: "5.7 litres of hemispherical-head V8 delivering the lazy, bottomless low-end shove that only big American iron provides — and a soundtrack to match.",
-        image: "/cars/notte-v10-3.jpg",
-      },
-      {
-        title: "Two tonnes of attitude",
-        copy: "Big, heavy and utterly unbothered. The Challenger drives exactly the way it looks — a wide-shouldered coupé that makes no apology for any of it.",
-        image: "/cars/notte-v10-classic.jpg",
-      },
-    ],
-    features: [
-      {
-        title: "5.7 litres of HEMI",
-        copy: "Two valves per cylinder, hemispherical combustion chambers and a fat, early-arriving torque curve. The numbers are honest; the noise is the entire point.",
-        image: "/cars/notte-v10-2.jpg",
-        stat: { value: "556 NM", label: "low-end torque" },
-      },
-      {
-        title: "The Shaker, back from 1970",
-        copy: "The scoop is mounted to the engine, not the bonnet, so it shudders visibly with every throttle blip — a faithful revival of a muscle-car icon that genuinely feeds cold air to the intake.",
-        image: "/cars/notte-v10-3.jpg",
-        stat: { value: "375 HP", label: "5.7 HEMI V8" },
-      },
-      {
-        title: "Retro by design",
-        copy: "The proportions, the deep-set gauges and the planted stance are all deliberately period-correct. The Challenger is modern only where it has to be — and old-school everywhere it counts.",
-        image: "/cars/notte-v10-classic.jpg",
-        stat: { value: "1,880 KG", label: "kerb weight" },
       },
     ],
   },

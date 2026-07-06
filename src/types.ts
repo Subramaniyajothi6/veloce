@@ -45,10 +45,25 @@ export interface CarModel3D {
   caliperMaterials?: string[];
   /** Solid color for the brake calipers (e.g. an orange "#ff5a1e"). */
   caliperColor?: string;
-  /** Flat matte recolor of arbitrary named materials — e.g. neutralizing a
+  /** Flat recolor of arbitrary named materials — e.g. neutralizing a
    *  model's stray accent colour (green seat belts / caliper paint) so it
-   *  doesn't fight the chosen livery. No emissive, unlike `caliperColor`. */
-  recolor?: { materials: string[]; color: string }[];
+   *  doesn't fight the chosen livery. No emissive, unlike `caliperColor`.
+   *  Defaults to matte (metalness 0.3 / roughness 0.6) unless overridden. */
+  recolor?: { materials: string[]; color: string; metalness?: number; roughness?: number }[];
+  /** Recolor only the connected geometry islands of `material` that sit fully
+   *  inside `box` ([min, max] corners in the GLB's raw world space, before
+   *  yaw/normalization) — for badges/lettering baked into a shared body-paint
+   *  material, where recoloring the whole material would hit trim elsewhere. */
+  partRecolor?: {
+    material: string;
+    box: [[number, number, number], [number, number, number]];
+    color: string;
+    metalness?: number;
+    roughness?: number;
+    /** Self-glow intensity (same hue as `color`) — badges/lettering on faces
+     *  the scene lights never reach need a lift to read at all. */
+    emissive?: number;
+  }[];
   /** Source + license line (attribution). */
   credit: string;
 }

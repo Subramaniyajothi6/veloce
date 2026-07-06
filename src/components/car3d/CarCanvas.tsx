@@ -67,6 +67,100 @@ function opaqueBox(root: THREE.Object3D) {
   return box.isEmpty() ? box.setFromObject(root, true) : box;
 }
 
+/** Recolor only the connected geometry islands of one material that sit fully
+ *  inside a raw-model-space box. CSR2-style models bake badges/lettering into
+ *  the same material as body trim (spine strip, mirror caps), so a whole-
+ *  material recolor is not an option — instead the mesh's triangles are
+ *  partitioned into two draw groups on a fresh index (vertex data stays
+ *  shared with drei's cached scene) and only the in-box islands get the new
+ *  material. Runs before the body repaint, which must stay array-aware. */
+function recolorPartsInBox(
+  root: THREE.Object3D,
+  spec: NonNullable<CarModel3D["partRecolor"]>[number],
+) {
+  const region = new THREE.Box3(
+    new THREE.Vector3(...spec.box[0]),
+    new THREE.Vector3(...spec.box[1]),
+  );
+  const accent = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(spec.color),
+    metalness: spec.metalness ?? 0.3,
+    roughness: spec.roughness ?? 0.6,
+    emissive: new THREE.Color(spec.color),
+    emissiveIntensity: spec.emissive ?? 0,
+  });
+  root.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const mat = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+    if (mat?.name !== spec.material) return;
+    const geo = mesh.geometry;
+    const pos = geo.getAttribute("position");
+    const idx = geo.getIndex();
+    if (!pos || !idx) return;
+
+    /* union-find over vertices, welding coincident positions so islands the
+       exporter split into disconnected fans still count as one part */
+    const parent = new Int32Array(pos.count);
+    for (let i = 0; i < parent.length; i++) parent[i] = i;
+    const find = (i: number) => {
+      while (parent[i] !== i) {
+        parent[i] = parent[parent[i]];
+        i = parent[i];
+      }
+      return i;
+    };
+    const union = (a: number, b: number) => {
+      const ra = find(a);
+      const rb = find(b);
+      if (ra !== rb) parent[ra] = rb;
+    };
+    const weld = new Map<string, number>();
+    for (let i = 0; i < pos.count; i++) {
+      const key = `${Math.round(pos.getX(i) * 5000)},${Math.round(pos.getY(i) * 5000)},${Math.round(pos.getZ(i) * 5000)}`;
+      const prev = weld.get(key);
+      if (prev === undefined) weld.set(key, i);
+      else union(i, prev);
+    }
+    for (let t = 0; t < idx.count; t += 3) {
+      union(idx.getX(t), idx.getX(t + 1));
+      union(idx.getX(t + 1), idx.getX(t + 2));
+    }
+
+    /* island bounds in raw world space (pre-yaw/normalization) */
+    mesh.updateWorldMatrix(true, false);
+    const v = new THREE.Vector3();
+    const bounds = new Map<number, THREE.Box3>();
+    for (let i = 0; i < pos.count; i++) {
+      const island = find(i);
+      let b = bounds.get(island);
+      if (!b) bounds.set(island, (b = new THREE.Box3()));
+      b.expandByPoint(v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld));
+    }
+    const picked = new Set<number>();
+    for (const [island, b] of bounds) if (region.containsBox(b)) picked.add(island);
+
+    /* partition triangles into [rest, accent] draw groups */
+    const rest: number[] = [];
+    const hot: number[] = [];
+    for (let t = 0; t < idx.count; t += 3) {
+      (picked.has(find(idx.getX(t))) ? hot : rest).push(
+        idx.getX(t),
+        idx.getX(t + 1),
+        idx.getX(t + 2),
+      );
+    }
+    if (!hot.length) return;
+    const split = new THREE.BufferGeometry();
+    for (const [name, attr] of Object.entries(geo.attributes)) split.setAttribute(name, attr);
+    split.setIndex(rest.concat(hot));
+    split.addGroup(0, rest.length, 0);
+    split.addGroup(rest.length, hot.length, 1);
+    mesh.geometry = split;
+    mesh.material = [mat, accent];
+  });
+}
+
 /**
  * Each car ships as a found GLB with its own scale, orientation and material
  * names — normalize size/ground, strip embedded lights, then repaint the
@@ -106,6 +200,10 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
       }
     });
 
+    /* before the repaint: the split matches on original material names, and
+       its group-0 material may itself be a body slot the repaint then paints */
+    model.partRecolor?.forEach((spec) => recolorPartsInBox(c, spec));
+
     if (model.repaint) {
       /* rank materials by the surface area they cover */
       const byMat = new Map<THREE.Material, number>();
@@ -138,8 +236,12 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
       c.traverse((o) => {
         const m = o as THREE.Mesh;
         if (!m.isMesh) return;
-        const mat = Array.isArray(m.material) ? m.material[0] : m.material;
-        if (isBody(mat)) m.material = body;
+        if (Array.isArray(m.material)) {
+          /* multi-group mesh (partRecolor split): paint only the body slots */
+          m.material = m.material.map((mm) => (isBody(mm) ? body : mm));
+        } else if (isBody(m.material)) {
+          m.material = body;
+        }
         /* everything else keeps its authored look (glass, trim, interior) */
       });
     }
@@ -171,8 +273,8 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
         names: r.materials,
         mat: new THREE.MeshStandardMaterial({
           color: new THREE.Color(r.color),
-          metalness: 0.3,
-          roughness: 0.6,
+          metalness: r.metalness ?? 0.3,
+          roughness: r.roughness ?? 0.6,
         }),
       }));
       c.traverse((o) => {
@@ -193,7 +295,7 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
     const center = box2.getCenter(new THREE.Vector3());
     c.position.set(-center.x, -box2.min.y, -center.z);
     return c;
-  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials, model.recolor]);
+  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials, model.recolor, model.partRecolor]);
 
   return <primitive object={car} />;
 }
