@@ -6,6 +6,7 @@ import { endSession, requireAuth } from "@/lib/auth";
 import { connectDB, dbConfigured } from "@/lib/db";
 import { BookingModel } from "@/models/Booking";
 import { CarModel } from "@/models/Car";
+import { EnquiryModel } from "@/models/Enquiry";
 
 export async function logout(): Promise<void> {
   await endSession();
@@ -138,4 +139,33 @@ export async function deleteBooking(formData: FormData): Promise<void> {
     console.error("[admin] deleteBooking failed:", err);
   }
   revalidatePath("/admin/bookings");
+}
+
+export async function updateEnquiryStatus(formData: FormData): Promise<void> {
+  await requireAuth();
+  if (!dbConfigured()) return;
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  if (!id || !["new", "contacted", "closed"].includes(status)) return;
+  try {
+    const conn = await connectDB();
+    if (conn) await EnquiryModel.updateOne({ _id: id }, { $set: { status } });
+  } catch (err) {
+    console.error("[admin] updateEnquiryStatus failed:", err);
+  }
+  revalidatePath("/admin/enquiries");
+}
+
+export async function deleteEnquiry(formData: FormData): Promise<void> {
+  await requireAuth();
+  if (!dbConfigured()) return;
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  try {
+    const conn = await connectDB();
+    if (conn) await EnquiryModel.deleteOne({ _id: id });
+  } catch (err) {
+    console.error("[admin] deleteEnquiry failed:", err);
+  }
+  revalidatePath("/admin/enquiries");
 }

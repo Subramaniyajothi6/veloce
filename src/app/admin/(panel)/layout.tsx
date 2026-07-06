@@ -37,6 +37,9 @@ export default async function PanelLayout({
               <Link href="/admin/bookings" className={navCls}>
                 Bookings
               </Link>
+              <Link href="/admin/enquiries" className={navCls}>
+                Enquiries
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-5">

@@ -148,11 +148,56 @@ export interface ArchiveSale {
   image: string;
 }
 
-/** Ownership service row. */
+/** Headline figure on a service detail page. */
+export interface ServiceStat {
+  value: string;
+  label: string;
+  note: string;
+}
+
+/** Numbered step in a service detail page's "how it works". */
+export interface ServiceStep {
+  title: string;
+  copy: string;
+}
+
+/** One "what's included" line on a service detail page. */
+export interface ServiceInclusion {
+  title: string;
+  copy: string;
+}
+
+/** Per-service extra input on the enquiry form. `car` renders a select over
+ *  the live range (options come from props, not this config). */
+export interface EnquiryField {
+  name: string;
+  label: string;
+  type: "text" | "select" | "car";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+}
+
+/** Ownership service row + its detail page at /services/[slug]. */
 export interface ServiceItem {
+  slug: string;
   num: string;
   title: string;
   copy: string;
+  /** Detail-page headline: [plain part, outlined part]. */
+  headline: [string, string];
+  lede: string;
+  stats: ServiceStat[];
+  steps: ServiceStep[];
+  inclusions: ServiceInclusion[];
+  /** Small-print reassurance line shown with the enquiry form. */
+  note: string;
+  /** Enquiry form CTA + confirmation copy. */
+  enquiry: {
+    submitLabel: string;
+    successTitle: string;
+    successCopy: string;
+  };
 }
 
 /** Animated stat in "The Record". */

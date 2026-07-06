@@ -16,9 +16,11 @@ const columns = [
   {
     title: "Company",
     links: [
-      { label: "Financing", href: "/#services" },
+      { label: "Financing & Leasing", href: "/services/financing" },
+      { label: "Global Sourcing", href: "/services/sourcing" },
+      { label: "Trade-in & Consignment", href: "/services/trade-in" },
+      { label: "Lifetime Aftercare", href: "/services/aftercare" },
       { label: "Pre-owned", href: "/#preowned" },
-      { label: "Sourcing", href: "/#services" },
       { label: "Showrooms", href: "/#visit" },
     ],
   },

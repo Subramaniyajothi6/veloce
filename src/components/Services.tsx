@@ -1,18 +1,33 @@
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import { services } from "@/data/services";
 
-export default function Services() {
+/** Ownership services list. Renders as the home-page section by default;
+ *  `standalone` turns it into the /services index page (h1 + nav clearance). */
+export default function Services({ standalone = false }: { standalone?: boolean }) {
+  const Heading = standalone ? "h1" : "h2";
   return (
-    <section id="services" className="sec">
+    <section
+      id="services"
+      className={standalone ? "sec pt-[clamp(8rem,16vh,11rem)]" : "sec"}
+    >
       <div className="wrap">
         <div className="sec-top reveal">
           <div>
             <span className="eyebrow">
-              <b>05</b> Ownership
+              {standalone ? (
+                <>
+                  <b>Ownership</b> Services
+                </>
+              ) : (
+                <>
+                  <b>05</b> Ownership
+                </>
+              )}
             </span>
-            <h2 className="h2">
+            <Heading className="h2">
               Beyond the <span className="text-outline">handshake</span>
-            </h2>
+            </Heading>
           </div>
           <p>
             Buying the car is the shortest part of the story. Everything after
@@ -22,8 +37,10 @@ export default function Services() {
 
         <div className="border-t border-line">
           {services.map((s, i) => (
-            <div
+            <Link
               key={s.num}
+              href={`/services/${s.slug}`}
+              data-cursor="VIEW"
               className="reveal group relative grid grid-cols-[90px_1.1fr_1.6fr_60px] gap-8 items-center px-4 py-[2.3rem] border-b border-line transition-[background-color,padding] duration-[0.4s] ease-out-expo hover:bg-white/[0.025] hover:pl-[1.8rem] max-[820px]:grid-cols-[50px_1fr_46px] max-[820px]:[grid-template-areas:'num_title_arr'_'num_copy_arr']"
               style={i ? ({ "--d": `${i * 0.06}s` } as CSSProperties) : undefined}
             >
@@ -47,7 +64,7 @@ export default function Services() {
                   <path d="M7 17L17 7M8 7h9v9" />
                 </svg>
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
