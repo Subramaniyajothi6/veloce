@@ -60,3 +60,6 @@ next-env.d.ts
 /downloads/photos/_raw/
 /public/cars/_incoming/
 
+
+# internal handoff note - kept on disk, not committed
+/HANDOFF.md
