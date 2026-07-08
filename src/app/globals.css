@@ -60,7 +60,7 @@
 }
 
 /* page transition (template.tsx re-mounts per navigation) */
-@keyframes wipeOut {
+@keyframes sliceReveal {
   from { transform: scaleY(1); }
   to { transform: scaleY(0); }
 }
@@ -68,17 +68,27 @@
   from { opacity: 0; transform: translateY(26px); }
   to { opacity: 1; transform: none; }
 }
-.page-wipe {
+/* red blades cover the incoming route, then release bottom-first, staggered */
+.page-slices {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: var(--color-veloce);
-  transform-origin: top;
+  display: flex;
   pointer-events: none;
-  animation: wipeOut 0.6s var(--ease-in-out-hard) 0.05s both;
+}
+.page-slices i {
+  flex: 1;
+  background: var(--color-veloce);
+  transform-origin: bottom;
+  transform: scaleY(1);
+  animation: sliceReveal 0.5s var(--ease-in-out-hard) both;
 }
 .page-enter {
-  animation: pageRise 0.7s var(--ease-out-expo) 0.15s both;
+  animation: pageRise 0.7s var(--ease-out-expo) 0.34s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-slices { display: none; }
+  .page-enter { animation: none; }
 }
 
 /* ==========================================================
@@ -122,6 +132,15 @@
   @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
     html.js body, html.js a, html.js button { cursor: none; }
   }
+  /* The atelier (configurator) renders on the bare root layout without the
+     custom-cursor component, so the native cursor must come back — and the 3D
+     stage gets grab/grabbing so drag-to-rotate is discoverable. Higher
+     specificity than the `cursor: none` rule above. */
+  html.js .atelier { cursor: auto; }
+  html.js .atelier a,
+  html.js .atelier button:not(:disabled) { cursor: pointer; }
+  html.js .atelier canvas { cursor: grab; }
+  html.js .atelier canvas:active { cursor: grabbing; }
   /* JS-dependent chrome (preloader) must not render without JS */
   html:not(.js) .js-only { display: none !important; }
 }

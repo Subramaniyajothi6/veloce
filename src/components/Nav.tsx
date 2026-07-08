@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/models", label: "Models" },
@@ -14,14 +14,52 @@ const links = [
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 50);
+      // McLaren-style: collapse on scroll down, reveal on scroll up,
+      // always visible near the top. 6px hysteresis absorbs jitter.
+      if (!reduced) {
+        if (y <= 160) setHidden(false);
+        else if (y > lastY + 6) setHidden(true);
+        else if (y < lastY - 6) setHidden(false);
+      }
+      lastY = y;
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Publish nav height + hidden state so sticky elements below (ModelSubNav)
+  // can slide between top-of-viewport and below-the-nav in lockstep.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const set = () =>
+      document.documentElement.style.setProperty("--nav-h", `${el.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.documentElement.style.removeProperty("--nav-h");
+    };
+  }, []);
+
+  const collapsed = hidden && !open;
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("nav-hidden", collapsed);
+    return () => document.documentElement.classList.remove("nav-hidden");
+  }, [collapsed]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -41,11 +79,13 @@ export default function Nav() {
   return (
     <>
       <header
-        className={`fixed top-0 inset-x-0 z-[1000] border-b transition-[background-color,border-color] duration-[0.4s] ${
+        ref={headerRef}
+        onFocusCapture={() => setHidden(false)}
+        className={`fixed top-0 inset-x-0 z-[1000] border-b transition-[background-color,border-color,translate] duration-[0.4s] ease-out-expo ${
           scrolled
             ? "bg-[rgba(10,10,11,0.72)] backdrop-blur-[18px] backdrop-saturate-[1.4] border-line"
             : "border-transparent"
-        }`}
+        } ${collapsed ? "-translate-y-full" : "translate-y-0"}`}
       >
         <div
           className={`wrap flex items-center justify-between gap-8 transition-[padding] duration-[0.4s] ease-out-expo ${

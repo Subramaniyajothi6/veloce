@@ -41,6 +41,10 @@ export interface CarModel3D {
   repaint?: boolean;
   /** Exact material names to repaint (skips the body heuristic). */
   bodyMaterials?: string[];
+  /** Subset of `bodyMaterials` that is the true outer shell. When set, the
+   *  configurator finish is applied to these only; the remaining body slots
+   *  (interior, grille backing, trim) stay at the signature `basePaint`. */
+  finishMaterials?: string[];
   /** Exact brake-caliper material names to paint with `caliperColor`. */
   caliperMaterials?: string[];
   /** Solid color for the brake calipers (e.g. an orange "#ff5a1e"). */
@@ -110,6 +114,10 @@ export interface CarProfile {
   alt: string;
   /** Body paint color for the 3D model. */
   paint: string;
+  /** Factory-authentic finishes offered in the configurator for THIS car
+   *  (colours the real marque actually offers). First entry is the signature
+   *  (its hex should match `paint`). Falls back to a generic set if omitted. */
+  finishes?: { name: string; hex: string }[];
   model: CarModel3D;
   specs: CarSpec[];
   /** Extra photography for the detail page (hero image not included). */

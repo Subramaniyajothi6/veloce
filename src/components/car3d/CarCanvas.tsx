@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, OrbitControls, useGLTF } from "@react-three/drei";
 import { Suspense, useMemo } from "react";
 import * as THREE from "three";
 import type { CarModel3D } from "@/types";
@@ -167,7 +167,18 @@ function recolorPartsInBox(
  * body: explicitly listed materials, else one named like a body (≥5% of the
  * surface), else the largest non-black-painted one.
  */
-function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
+function CarModel({
+  paint,
+  basePaint,
+  model,
+  studio,
+}: {
+  paint: string;
+  basePaint: string;
+  model: CarModel3D;
+  /** Configurator studio: lower metalness so the finish colour reads true. */
+  studio: boolean;
+}) {
   const { scene } = useGLTF(model.url);
 
   const car = useMemo(() => {
@@ -225,22 +236,43 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
         ranked.find(([m]) => !isBlack(m))?.[0];
       const isBody = (mat: THREE.Material) =>
         model.bodyMaterials ? model.bodyMaterials.includes(mat.name) : mat === bodyMat;
+      /* When a model lists `finishMaterials`, only those take the chosen finish
+         (the true outer shell); the remaining body slots — interior, grille
+         backing, spine/trim bundled into the same "paint the whole car" set —
+         stay at `basePaint` (the signature colour). Without it, the whole body
+         takes the finish, as before. */
+      const isFinish = (mat: THREE.Material) =>
+        model.finishMaterials ? model.finishMaterials.includes(mat.name) : isBody(mat);
 
-      const body = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(paint),
-        metalness: 0.85,
-        roughness: 0.3,
-        clearcoat: 1,
-        clearcoatRoughness: 0.05,
-      });
+      const coat = (hex: string) =>
+        new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(hex),
+          /* Studio (configurator): a metallic base that's a touch rough under a
+             sharp clearcoat reads as real automotive paint against the softbox
+             environment — a soft body sheen plus a crisp highlight streak,
+             instead of a flat game colour. The cinematic scroll keeps the
+             glossier mirror finish (0.85 / smooth). */
+          metalness: studio ? 0.65 : 0.85,
+          roughness: studio ? 0.4 : 0.3,
+          clearcoat: 1,
+          clearcoatRoughness: studio ? 0.08 : 0.05,
+        });
+      const body = coat(paint);
+      /* only build a distinct base coat when it would actually differ */
+      const base =
+        model.finishMaterials && basePaint !== paint ? coat(basePaint) : body;
+
+      const pick = (mat: THREE.Material) =>
+        isFinish(mat) ? body : isBody(mat) ? base : null;
       c.traverse((o) => {
         const m = o as THREE.Mesh;
         if (!m.isMesh) return;
         if (Array.isArray(m.material)) {
-          /* multi-group mesh (partRecolor split): paint only the body slots */
-          m.material = m.material.map((mm) => (isBody(mm) ? body : mm));
-        } else if (isBody(m.material)) {
-          m.material = body;
+          /* multi-group mesh (partRecolor split): recoat only the body slots */
+          m.material = m.material.map((mm) => pick(mm) ?? mm);
+        } else {
+          const next = pick(m.material);
+          if (next) m.material = next;
         }
         /* everything else keeps its authored look (glass, trim, interior) */
       });
@@ -295,7 +327,7 @@ function CarModel({ paint, model }: { paint: string; model: CarModel3D }) {
     const center = box2.getCenter(new THREE.Vector3());
     c.position.set(-center.x, -box2.min.y, -center.z);
     return c;
-  }, [scene, paint, model.yaw, model.repaint, model.bodyMaterials, model.caliperColor, model.caliperMaterials, model.recolor, model.partRecolor]);
+  }, [scene, paint, basePaint, studio, model.yaw, model.repaint, model.bodyMaterials, model.finishMaterials, model.caliperColor, model.caliperMaterials, model.recolor, model.partRecolor]);
 
   return <primitive object={car} />;
 }
@@ -426,6 +458,8 @@ export default function CarCanvas({
   stages,
   staticView,
   introOffset = false,
+  orbit = false,
+  basePaint,
 }: {
   paint: string;
   model: CarModel3D;
@@ -434,6 +468,13 @@ export default function CarCanvas({
   staticView: boolean;
   /** Nudge the whole scene down during the intro so the big title clears it. */
   introOffset?: boolean;
+  /** Hand the camera to the viewer (drag-to-rotate) instead of the scripted
+   *  Rig — used by the configurator so a finish can be inspected from any angle. */
+  orbit?: boolean;
+  /** Colour for the body slots that are NOT the outer shell (interior, grille
+   *  backing, trim) when the model defines `finishMaterials`. Defaults to
+   *  `paint`, so a single-colour repaint is unchanged. */
+  basePaint?: string;
 }) {
   return (
     /* z-[2]: the car renders ABOVE the intro title (z-[1]) but below the HUD
@@ -451,24 +492,85 @@ export default function CarCanvas({
         shadows="percentage"
         dpr={[1, 2]}
         gl={{ alpha: true }}
-        camera={{ fov: 32, position: [5, 1.6, 6.5] }}
+        camera={{ fov: orbit ? 33 : 32, position: orbit ? [3.5, 1.5, 5.4] : [5, 1.6, 6.5] }}
       >
-        <fog attach="fog" args={["#0a0a0b", 14, 26]} />
-        <ambientLight intensity={0.35} />
-        <directionalLight
-          position={[6, 9, 4]}
-          intensity={2.4}
-          castShadow
-          shadow-mapSize={[1024, 1024]}
-        />
-        <directionalLight position={[-7, 4, -6]} intensity={1} color="#7f8cff" />
-        <spotLight position={[0, 10, 0]} intensity={1.2} angle={0.5} penumbra={1} />
+        {orbit ? (
+          /* configurator studio — image-based lighting from softboxes the body
+             reflects (built locally, no external HDR), so metallic paint reads
+             as real car paint with proper highlight streaks instead of a flat
+             game colour. A key light adds the sharp highlight + contact shadow. */
+          <>
+            <fog attach="fog" args={["#0a0a0b", 26, 52]} />
+            <ambientLight intensity={0.28} />
+            <Environment resolution={256} frames={1}>
+              {/* soft ceiling wash */}
+              <Lightformer
+                intensity={0.9}
+                color="#ffffff"
+                position={[0, 6.5, 0]}
+                rotation={[Math.PI / 2, 0, 0]}
+                scale={[14, 14, 1]}
+              />
+              {/* key softbox (camera-right) — the main body streak */}
+              <Lightformer
+                intensity={3}
+                color="#ffffff"
+                position={[5, 4, 6]}
+                rotation={[0, -Math.PI / 4, 0]}
+                scale={[5, 9, 1]}
+              />
+              {/* cool fill strip (camera-left) */}
+              <Lightformer
+                intensity={2.1}
+                color="#eaf0ff"
+                position={[-6, 3.5, 3]}
+                rotation={[0, Math.PI / 3, 0]}
+                scale={[3, 9, 1]}
+              />
+              {/* rear rim boxes to define the silhouette against the dark set */}
+              <Lightformer
+                intensity={2}
+                color="#ffffff"
+                position={[-2, 3, -7]}
+                rotation={[0, Math.PI, 0]}
+                scale={[8, 7, 1]}
+              />
+              <Lightformer
+                intensity={1.6}
+                color="#ffffff"
+                position={[6, 2.5, -4]}
+                rotation={[0, -2 * Math.PI / 3, 0]}
+                scale={[3, 6, 1]}
+              />
+            </Environment>
+            <directionalLight
+              position={[6, 9, 4]}
+              intensity={1.7}
+              castShadow
+              shadow-mapSize={[2048, 2048]}
+            />
+            <directionalLight position={[-6, 5, -2]} intensity={0.5} />
+          </>
+        ) : (
+          <>
+            <fog attach="fog" args={["#0a0a0b", 14, 26]} />
+            <ambientLight intensity={0.35} />
+            <directionalLight
+              position={[6, 9, 4]}
+              intensity={2.4}
+              castShadow
+              shadow-mapSize={[1024, 1024]}
+            />
+            <directionalLight position={[-7, 4, -6]} intensity={1} color="#7f8cff" />
+            <spotLight position={[0, 10, 0]} intensity={1.2} angle={0.5} penumbra={1} />
+          </>
+        )}
         <mesh rotation-x={-Math.PI / 2} receiveShadow>
           <planeGeometry args={[60, 60]} />
           <meshStandardMaterial color="#0b0b0c" />
         </mesh>
         <Suspense fallback={null}>
-          <CarModel paint={paint} model={model} />
+          <CarModel paint={paint} basePaint={basePaint ?? paint} model={model} studio={orbit} />
           <ContactShadows
             position={[0, 0.01, 0]}
             opacity={0.65}
@@ -478,7 +580,23 @@ export default function CarCanvas({
             resolution={512}
           />
         </Suspense>
-        <Rig progressRef={progressRef} stages={stages} staticView={staticView} />
+        {orbit ? (
+          /* viewer-controlled: drag to rotate, wheel/pinch to zoom, no pan,
+             clamped above the ground line so the car can't be seen from below */
+          <OrbitControls
+            makeDefault
+            target={[0, 0.6, 0]}
+            enablePan={false}
+            enableDamping
+            dampingFactor={0.08}
+            minDistance={4.2}
+            maxDistance={9}
+            minPolarAngle={0.18}
+            maxPolarAngle={Math.PI / 2 - 0.03}
+          />
+        ) : (
+          <Rig progressRef={progressRef} stages={stages} staticView={staticView} />
+        )}
       </Canvas>
     </div>
   );

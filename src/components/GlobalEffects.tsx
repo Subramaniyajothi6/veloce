@@ -8,11 +8,13 @@ import { useManifestoFill } from "@/hooks/useManifestoFill";
 import { useMarqueeSkew } from "@/hooks/useMarqueeSkew";
 import { useParallax } from "@/hooks/useParallax";
 import { useReveal } from "@/hooks/useReveal";
+import { useScramble } from "@/hooks/useScramble";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 /** Mounts all document-level effects once the page markup exists. */
 export default function GlobalEffects() {
   useReveal();
+  useScramble();
   useCounters();
   useParallax();
   useManifestoFill();

@@ -14,11 +14,20 @@ export const cars: CarProfile[] = [
     tagline: "One of one.",
     description:
       "A single coachbuilt commission on the Chiron's quad-turbo W16 — the most expensive new car ever sold. All black, all carbon, named for the lost Type 57 SC Atlantic it pays tribute to.",
-    image: "/cars/royale.jpg",
-    alt: "Black Bugatti La Voiture Noire, elevated front three-quarter studio shot",
+    image: "/cars/royale-nose.jpg",
+    alt: "Black Bugatti La Voiture Noire, head-on front studio view",
     /* a charcoal "black" — pure #000 vanishes on the dark set and its metallic
        reflections tint to black; this reads black but still catches highlights */
     paint: "#2c2c33",
+    finishes: [
+      { name: "Noir Intégral", hex: "#2c2c33" },
+      { name: "Nocturne", hex: "#0c0c0e" },
+      { name: "Bleu Bugatti", hex: "#1b3a6b" },
+      { name: "Bleu Sport", hex: "#2f5c99" },
+      { name: "Gris Rafale", hex: "#6a6d72" },
+      { name: "Rouge", hex: "#8f1519" },
+      { name: "Blanc Craie", hex: "#e9ebee" },
+    ],
     model: {
       url: "/models/royale.glb",
       yaw: Math.PI,
@@ -33,6 +42,15 @@ export const cars: CarProfile[] = [
         "lavoiturecsr2_coloured__env_50_spec",
         "lavoiturecsr2_textured2a__spec",
         "lavoiturecsr2_textureda__env_50_spec",
+      ],
+      /* the outer shell only (upper panels + lower sills) — a configurator
+         finish paints these, leaving the interior (textured2a), grille backing
+         + spine/trim (coloured) and grille mesh (textureda) at the signature
+         dark. The signature scroll look still paints all five (basePaint ==
+         paint there), so the all-black car is unchanged. */
+      finishMaterials: [
+        "Matte__FFFFFFFF__prim_env_50_spec",
+        "Matte__FF114182__sec_env_50_spec",
       ],
       /* white rear BUGATTI script + silver EB deck badge (press-shot look).
          The visible glyphs are the "light" slot's 7 overlay islands — the
@@ -71,8 +89,10 @@ export const cars: CarProfile[] = [
       { value: 1, unit: "OF 1", label: "Built", detail: "A single coachbuilt car, sold before completion." },
     ],
     gallery: [
-      { src: "/cars/royale-mood.jpg", alt: "Black Bugatti La Voiture Noire rear, glowing full-width taillight in the dark", caption: "Out of the dark" },
-      { src: "/cars/royale-spine.jpg", alt: "Black Bugatti La Voiture Noire from a high rear angle, carbon roof and dorsal spine", caption: "From above" },
+      { src: "/cars/royale-road.jpg", alt: "Black Bugatti La Voiture Noire driving on an open road, rear three-quarter", caption: "At speed" },
+      { src: "/cars/royale-rear-day.jpg", alt: "Black Bugatti La Voiture Noire parked outdoors, rear three-quarter in daylight", caption: "In the open" },
+      { src: "/cars/royale-pipes.jpg", alt: "Detail of La Voiture Noire's six titanium exhaust pipes and signature plate", caption: "Six pipes" },
+      { src: "/cars/royale-redline.jpg", alt: "Close-up of La Voiture Noire's glowing red taillight bar", caption: "The red thread" },
     ],
     track: [
       { label: "Veloce circuit lap", value: "1:11.4", note: "Manufacturer demonstration, slicks" },
@@ -81,9 +101,9 @@ export const cars: CarProfile[] = [
     ],
     highlights: [
       {
-        title: "All black, all carbon",
-        copy: "Every panel is bare carbon fibre laid by hand, then lacquered in a black so deep it reads as liquid. No badges, no chrome — only surface.",
-        image: "/cars/royale-top.jpg",
+        title: "One unbroken line",
+        copy: "Bodied entirely by Bugatti's atelier, every surface flows into the next with no seam to break it — a single sculpted volume from splitter to tail.",
+        image: "/cars/royale-front34.jpg",
       },
       {
         title: "The W16, untouched",
@@ -91,34 +111,40 @@ export const cars: CarProfile[] = [
         image: "/cars/royale-rear34.jpg",
       },
       {
-        title: "Coachbuilt, once",
-        copy: "A single commission, bodied entirely by Bugatti's atelier over months — the most expensive new car ever sold, and the only one of its kind.",
-        image: "/cars/royale-location.jpg",
+        title: "Lit from behind",
+        copy: "A single red line and a backlit BUGATTI script draw the full width of the tail, above six titanium pipes and the hand-scripted La Voiture Noire plate.",
+        image: "/cars/royale-stern.jpg",
       },
       {
-        title: "Named for a legend",
-        copy: "A tribute to the lost Type 57 SC Atlantic — the voiture noire that vanished in 1938 and has never been found.",
-        image: "/cars/royale-head-on.jpg",
+        title: "All black, all carbon",
+        copy: "Every panel is bare carbon fibre laid by hand, then lacquered in a black so deep it reads as liquid. No badges, no chrome — only surface.",
+        image: "/cars/royale-top.jpg",
       },
     ],
     features: [
       {
-        title: "Sixteen cylinders, four turbos",
-        copy: "The W16 folds two narrow-angle V8s into one block, fed by four turbochargers spooling in pairs. Peak torque arrives at 2,000 rpm and holds flat to the limiter — relentless, seamless, unmistakably Bugatti.",
-        image: "/cars/royale-rear.jpg",
-        stat: { value: "1,600 NM", label: "from 2,000 rpm" },
+        title: "Sixteen cylinders, breathing",
+        copy: "Behind the cabin, the quad-turbo W16 draws through a deck of laser-cut vents — 1,500 hp of forced induction, cooled by the bodywork itself.",
+        image: "/cars/royale-deck.jpg",
+        stat: { value: "1,500 HP", label: "quad-turbo W16" },
+      },
+      {
+        title: "Light, machined",
+        copy: "Each headlight is a dense lattice of elements set into bare carbon — the car's only jewellery, and the only break in an otherwise unlit face.",
+        image: "/cars/royale-headlight.jpg",
+        stat: { value: "2.4 S", label: "0–100 km/h" },
+      },
+      {
+        title: "Milled from billet",
+        copy: "Each wheel is turned from a single forged blank; behind it, carbon-ceramic discs and blue calipers haul the car down harder than most cars accelerate.",
+        image: "/cars/royale-wheel.jpg",
+        stat: { value: "31.5 M", label: "100–0 km/h" },
       },
       {
         title: "A monocoque, sculpted by hand",
         copy: "Beneath the lacquer is a carbon-fibre monocoque finished to a mirror, with six tailpipes machined from titanium. Every join was dressed by hand until the body read as one unbroken surface.",
         image: "/cars/royale-exhaust.jpg",
         stat: { value: "1,995 KG", label: "coachbuilt kerb weight" },
-      },
-      {
-        title: "One of one, sold before completion",
-        copy: "La Voiture Noire was commissioned, built and delivered as a unique piece — the modern heir to Jean Bugatti's Atlantic. There will not be a second.",
-        image: "/cars/royale-detail.jpg",
-        stat: { value: "1 of 1", label: "ever built" },
       },
     ],
   },
@@ -135,6 +161,15 @@ export const cars: CarProfile[] = [
     /* SF90 XX launch livery is a light cool silver; tuned bright so the 0.85-metalness
        repaint reads as silver (not grey) under the dark, blue-lit studio scene */
     paint: "#d2d6da",
+    finishes: [
+      { name: "Argento Nürburgring", hex: "#d2d6da" },
+      { name: "Rosso Corsa", hex: "#c01829" },
+      { name: "Giallo Modena", hex: "#f4c200" },
+      { name: "Nero Daytona", hex: "#0d0d10" },
+      { name: "Blu Tour de France", hex: "#14224a" },
+      { name: "Grigio Silverstone", hex: "#6e7378" },
+      { name: "Bianco Avus", hex: "#eceef0" },
+    ],
     model: {
       url: "/models/furia.glb",
       repaint: true,
@@ -213,6 +248,15 @@ export const cars: CarProfile[] = [
     /* matches the white GT3 RS photos — kept bright so the metallic clearcoat
        still reads white (not grey) under the dark studio lighting */
     paint: "#eef1f4",
+    finishes: [
+      { name: "Carrara White", hex: "#eef1f4" },
+      { name: "GT Silver", hex: "#c3c7cb" },
+      { name: "Guards Red", hex: "#c81417" },
+      { name: "Racing Yellow", hex: "#f6c500" },
+      { name: "Shark Blue", hex: "#1f7fb0" },
+      { name: "Python Green", hex: "#65752b" },
+      { name: "Jet Black", hex: "#0d0d0f" },
+    ],
     model: {
       url: "/models/vento-rs.glb",
       repaint: true,
@@ -294,6 +338,15 @@ export const cars: CarProfile[] = [
     image: "/cars/giallo-gt.jpg",
     alt: "Carbon-fibre Lamborghini Centenario with yellow accents, elevated front three-quarter studio shot",
     paint: "#34343b",
+    finishes: [
+      { name: "Grigio Titans", hex: "#34343b" },
+      { name: "Giallo Orion", hex: "#f2b300" },
+      { name: "Verde Mantis", hex: "#6dbb2e" },
+      { name: "Arancio Argos", hex: "#e2571e" },
+      { name: "Blu Cepheus", hex: "#1c2f70" },
+      { name: "Rosso Mars", hex: "#8e1519" },
+      { name: "Bianco Monocerus", hex: "#e9ebee" },
+    ],
     model: {
       url: "/models/giallo-gt.glb",
       repaint: true,
@@ -385,6 +438,15 @@ export const cars: CarProfile[] = [
     /* Graphite grey — the model's Paint_Material is authored near-black, so a
        light metallic grey reads as silver-grey under the dark studio lighting */
     paint: "#9aa0a6",
+    finishes: [
+      { name: "Graphite", hex: "#9aa0a6" },
+      { name: "Ghost White", hex: "#e8eaed" },
+      { name: "Koenigsegg Blue", hex: "#1d4f8f" },
+      { name: "Cherry Red Pearl", hex: "#9e1518" },
+      { name: "Racing Green", hex: "#17402c" },
+      { name: "Karbon", hex: "#121214" },
+      { name: "Gold", hex: "#bd9a56" },
+    ],
     model: {
       url: "/models/gemera.glb",
       repaint: true,
@@ -485,6 +547,15 @@ export const cars: CarProfile[] = [
        0.85-metalness repaint reads as bright silver; the big Carbon1 panels keep
        their exposed carbon and RED_PAINT keeps the red pinstripe. */
     paint: "#c9cccd",
+    finishes: [
+      { name: "Argento", hex: "#c9cccd" },
+      { name: "Blu Francia", hex: "#1b3f7a" },
+      { name: "Rosso Dubai", hex: "#a3161b" },
+      { name: "Verde Inglese", hex: "#17402c" },
+      { name: "Giallo", hex: "#e8b21e" },
+      { name: "Carbo Nero", hex: "#131315" },
+      { name: "Grigio Mercury", hex: "#6c7075" },
+    ],
     model: {
       url: "/models/huayra.glb",
       repaint: true,
@@ -594,6 +665,15 @@ export const cars: CarProfile[] = [
        "SeatBelt" (#00ff00) reused for the harnesses AND the brake/wheel arcs —
        recolour it near-black so nothing fights the blue/dark theme. */
     paint: "#38a8ef",
+    finishes: [
+      { name: "Bleu Agile", hex: "#38a8ef" },
+      { name: "Bleu Bugatti", hex: "#1b3a6b" },
+      { name: "Nocturne", hex: "#0c0c0e" },
+      { name: "Orange Vif", hex: "#e2571e" },
+      { name: "Gris Rafale", hex: "#6a6d72" },
+      { name: "Rouge", hex: "#8f1519" },
+      { name: "Blanc Craie", hex: "#e9ebee" },
+    ],
     model: {
       // wheel-texture green stripes recoloured to near-black (tools/fix-bolide-wheels.mjs);
       // original /models-old/royale.glb left intact.
@@ -683,6 +763,15 @@ export const cars: CarProfile[] = [
     image: "/cars/furia-classic-headon.jpg",
     alt: "Red Ferrari 599XX, front head-on in the pit complex",
     paint: "#d11a1f",
+    finishes: [
+      { name: "Rosso Corsa", hex: "#d11a1f" },
+      { name: "Giallo Modena", hex: "#f4c200" },
+      { name: "Nero Daytona", hex: "#0d0d10" },
+      { name: "Argento Nürburgring", hex: "#c3c7cb" },
+      { name: "Blu Tour de France", hex: "#14224a" },
+      { name: "Bianco Avus", hex: "#eceef0" },
+      { name: "Grigio Silverstone", hex: "#6e7378" },
+    ],
     model: {
       url: "/models-old/furia.glb",
       repaint: true,

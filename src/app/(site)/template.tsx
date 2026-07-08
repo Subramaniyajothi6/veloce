@@ -15,7 +15,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
   if (!animate) return <>{children}</>;
   return (
     <>
-      <div className="page-wipe" aria-hidden="true" />
+      <div className="page-slices" aria-hidden="true">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <i key={i} style={{ animationDelay: `${0.05 + i * 0.05}s` }} />
+        ))}
+      </div>
       <div
         className="page-enter"
         onAnimationEnd={(e) => {

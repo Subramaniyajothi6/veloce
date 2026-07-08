@@ -34,11 +34,23 @@ interface LeanCar {
  *  from the static dataset and merged onto the DB inventory on read. */
 const rig = new Map<
   string,
-  { paint: string; model: CarModel3D; highlights?: CarHighlight[]; features?: CarFeature[] }
+  {
+    paint: string;
+    finishes?: { name: string; hex: string }[];
+    model: CarModel3D;
+    highlights?: CarHighlight[];
+    features?: CarFeature[];
+  }
 >(
   staticCars.map((c) => [
     c.slug,
-    { paint: c.paint, model: c.model, highlights: c.highlights, features: c.features },
+    {
+      paint: c.paint,
+      finishes: c.finishes,
+      model: c.model,
+      highlights: c.highlights,
+      features: c.features,
+    },
   ])
 );
 
@@ -59,6 +71,7 @@ function toProfile(doc: LeanCar): CarProfile {
     image: doc.image ?? "",
     alt: doc.alt ?? "",
     paint: doc.paint || override?.paint || "#888888",
+    finishes: override?.finishes,
     model,
     specs: (doc.specs ?? []).map((s) => ({
       value: s.value,

@@ -79,6 +79,9 @@ export default async function CarPage({
               >
                 <span>Book a test drive</span> <b className="arr">→</b>
               </Link>
+              <Link className="btn btn-ghost magnetic" href={`/models/${car.slug}/configure`}>
+                <span>Configure</span> <b className="arr">→</b>
+              </Link>
               <span className="font-mono text-[0.85rem] tracking-[0.14em] text-ash">
                 FROM <b className="text-cream font-semibold">{car.price}</b>
               </span>

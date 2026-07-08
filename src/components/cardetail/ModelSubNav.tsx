@@ -34,7 +34,7 @@ export default function ModelSubNav({ sections }: { sections: SubNavSection[] })
 
   return (
     <nav
-      className="sticky top-[2.7rem] z-[40] bg-night/85 backdrop-blur-[10px] border-y border-line"
+      className="sticky top-[calc(var(--nav-h,4rem)-1px)] [.nav-hidden_&]:top-0 z-[40] bg-night/85 backdrop-blur-[10px] border-y border-line transition-[top] duration-[0.4s] ease-out-expo"
       aria-label="On this page"
     >
       <div className="wrap flex gap-[clamp(1.25rem,3vw,2.5rem)] overflow-x-auto py-[0.9rem] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
