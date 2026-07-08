@@ -28,9 +28,14 @@
   --animate-dash: slideDash 2.2s var(--ease-in-out-hard) infinite;
   --animate-rise: lRise 1s var(--ease-out-expo) 0.15s forwards;
   --animate-kenburns: kenburns 2.8s var(--ease-out-expo) forwards;
+  --animate-loader: loaderSweep 1.15s var(--ease-in-out-hard) infinite;
 
   @keyframes mq {
     to { transform: translateX(-50%); }
+  }
+  @keyframes loaderSweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(320%); }
   }
   @keyframes slideDash {
     50% { transform: translateX(0); }

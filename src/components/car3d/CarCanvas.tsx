@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, OrbitControls, useGLTF } from "@react-three/drei";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import type { CarModel3D } from "@/types";
 
@@ -451,6 +451,18 @@ function Rig({
   return null;
 }
 
+/** Fires once — after the GLB has resolved and the scene commits — so the
+ *  parent can drop its loading overlay. Lives INSIDE the <Suspense> boundary,
+ *  so it only mounts after the model (which suspends on useGLTF) is ready; a
+ *  rAF defers the signal one frame so the car has actually painted. */
+function Ready({ onReady }: { onReady?: () => void }) {
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => onReady?.());
+    return () => cancelAnimationFrame(raf);
+  }, [onReady]);
+  return null;
+}
+
 export default function CarCanvas({
   paint,
   model,
@@ -460,6 +472,7 @@ export default function CarCanvas({
   introOffset = false,
   orbit = false,
   basePaint,
+  onReady,
 }: {
   paint: string;
   model: CarModel3D;
@@ -475,6 +488,8 @@ export default function CarCanvas({
    *  backing, trim) when the model defines `finishMaterials`. Defaults to
    *  `paint`, so a single-colour repaint is unchanged. */
   basePaint?: string;
+  /** Called once the GLB has loaded and the first frame is painted. */
+  onReady?: () => void;
 }) {
   return (
     /* z-[2]: the car renders ABOVE the intro title (z-[1]) but below the HUD
@@ -571,6 +586,7 @@ export default function CarCanvas({
         </mesh>
         <Suspense fallback={null}>
           <CarModel paint={paint} basePaint={basePaint ?? paint} model={model} studio={orbit} />
+          <Ready onReady={onReady} />
           <ContactShadows
             position={[0, 0.01, 0]}
             opacity={0.65}

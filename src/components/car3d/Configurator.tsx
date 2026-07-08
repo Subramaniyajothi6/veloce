@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import CarCanvas from "./CarCanvas";
+import { useCallback, useEffect, useRef, useState } from "react";
+import CarLoader from "./CarLoader";
 import type { CarProfile } from "@/types";
+
+/* Defer the Three.js/R3F/drei bundle — client-only and heavy — behind a
+   dynamic import; CarLoader covers the download until the finish is ready. */
+const CarCanvas = dynamic(() => import("./CarCanvas"), { ssr: false });
 
 /** Curated finishes offered in the configurator, over the car's own signature.
  *  Real-world automotive paint references, chosen for contrast across the row. */
@@ -31,7 +36,14 @@ export default function Configurator({ car }: { car: CarProfile }) {
 
   const [paint, setPaint] = useState(swatches[0].hex);
   const [webgl, setWebgl] = useState(true);
+  const [ready, setReady] = useState(false); // GLB loaded + first frame painted
+  const [loaderGone, setLoaderGone] = useState(false); // unmount after fade
   const progressRef = useRef(0);
+
+  const handleReady = useCallback(() => {
+    setReady(true);
+    setTimeout(() => setLoaderGone(true), 600);
+  }, []);
 
   // one-time WebGL probe so a machine without it still gets the car (as a photo)
   useEffect(() => {
@@ -49,15 +61,24 @@ export default function Configurator({ car }: { car: CarProfile }) {
     <main className="atelier fixed inset-0 bg-coal overflow-hidden">
       {/* stage */}
       {webgl ? (
-        <CarCanvas
-          paint={paint}
-          basePaint={car.paint}
-          model={car.model}
-          progressRef={progressRef}
-          stages={1}
-          staticView
-          orbit
-        />
+        <>
+          <CarCanvas
+            paint={paint}
+            basePaint={car.paint}
+            model={car.model}
+            progressRef={progressRef}
+            stages={1}
+            staticView
+            orbit
+            onReady={handleReady}
+          />
+          {!loaderGone && (
+            <CarLoader
+              label={car.name}
+              className={ready ? "opacity-0 pointer-events-none" : ""}
+            />
+          )}
+        </>
       ) : (
         <div className="absolute inset-0">
           <Image

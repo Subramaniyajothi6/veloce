@@ -1,11 +1,17 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { clamp, prefersReduced } from "@/lib/motion";
 import { onFrame } from "@/lib/raf";
 import type { CarProfile } from "@/types";
-import CarCanvas from "./CarCanvas";
+import CarLoader from "./CarLoader";
+
+/* The Three.js/R3F/drei bundle is heavy and only ever runs on the client, so
+   split it out of the route's initial JS and pull it in on demand. The branded
+   CarLoader (below) covers the download; ssr:false keeps three off the server. */
+const CarCanvas = dynamic(() => import("./CarCanvas"), { ssr: false });
 
 const formatSpec = (value: number, decimals?: number) =>
   decimals ? value.toFixed(decimals) : value.toLocaleString("en-US");
@@ -87,12 +93,19 @@ export default function CarExperience({ car }: { car: CarProfile }) {
   const railRef = useRef<HTMLElement>(null);
   const progressRef = useRef(0);
   const [stage, setStage] = useState(0);
-  const [mounted, setMounted] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [ready, setReady] = useState(false); // GLB loaded + first frame painted
+  const [loaderGone, setLoaderGone] = useState(false); // unmount after fade
 
   useEffect(() => {
-    setMounted(true);
     setReduced(prefersReduced());
+  }, []);
+
+  /* Hold the loading overlay from the JS-chunk download straight through the
+     GLB download, then fade it once the car has actually painted. */
+  const handleReady = useCallback(() => {
+    setReady(true);
+    setTimeout(() => setLoaderGone(true), 600);
   }, []);
 
   useEffect(() => {
@@ -127,14 +140,21 @@ export default function CarExperience({ car }: { car: CarProfile }) {
       style={reduced ? undefined : { height: `${stages * 85}vh` }}
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-night">
-        {mounted && (
-          <CarCanvas
-            paint={car.paint}
-            model={car.model}
-            progressRef={progressRef}
-            stages={stages}
-            staticView={reduced}
-            introOffset={stage === 0 && !reduced}
+        <CarCanvas
+          paint={car.paint}
+          model={car.model}
+          progressRef={progressRef}
+          stages={stages}
+          staticView={reduced}
+          introOffset={stage === 0 && !reduced}
+          onReady={handleReady}
+        />
+
+        {/* loading screen — sits above the stage (z-[6]) until the car paints */}
+        {!loaderGone && (
+          <CarLoader
+            label={car.name}
+            className={ready ? "opacity-0 pointer-events-none" : ""}
           />
         )}
 
