@@ -67,6 +67,11 @@ export function useHorizontalScroll() {
       }
     });
 
+    // NB: deliberately NO setPointerCapture. Capturing the pointer on the pane
+    // makes the browser retarget the following `click` to the pane instead of
+    // the card <Link> under the cursor, so tapping a model never navigated.
+    // Track the gesture on `window` instead (still catches moves/release even if
+    // the pointer leaves the pane) and only swallow the click on a real drag.
     const onDown = (e: PointerEvent) => {
       if (!active || e.button !== 0 || e.pointerType === "touch") return;
       dragging = true;
@@ -74,7 +79,6 @@ export function useHorizontalScroll() {
       lastX = e.clientX;
       momentum = 0;
       pane.style.cursor = "grabbing";
-      pane.setPointerCapture(e.pointerId);
     };
     const onMove = (e: PointerEvent) => {
       if (!dragging) return;
@@ -84,29 +88,30 @@ export function useHorizontalScroll() {
       window.scrollBy(0, -dx); // drag left → scroll down → gallery advances
       momentum = -dx; // last delta seeds the throw
     };
-    const endDrag = (e: PointerEvent) => {
+    const endDrag = () => {
       if (!dragging) return;
       dragging = false;
       pane.style.cursor = active ? "grab" : "";
-      try {
-        pane.releasePointerCapture(e.pointerId);
-      } catch {
-        // pointer already released
-      }
     };
-    // swallow the click that fires after a real drag, so it doesn't navigate
+    // stop native image/link dragging from hijacking a grab (we no longer have
+    // pointer capture to suppress it)
+    const onDragStart = (e: Event) => e.preventDefault();
+    // swallow the click that fires after a real drag so it doesn't navigate;
+    // a genuine click (little to no travel) passes straight through to the link
     const onClick = (e: MouseEvent) => {
-      if (moved > 6) {
+      if (moved > 8) {
         e.preventDefault();
         e.stopPropagation();
-        moved = 0;
       }
+      moved = 0;
     };
 
     pane.addEventListener("pointerdown", onDown);
-    pane.addEventListener("pointermove", onMove);
-    pane.addEventListener("pointerup", endDrag);
-    pane.addEventListener("pointercancel", endDrag);
+    pane.addEventListener("dragstart", onDragStart);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
+    window.addEventListener("blur", endDrag);
     pane.addEventListener("click", onClick, true);
 
     layout();
@@ -117,9 +122,11 @@ export function useHorizontalScroll() {
       window.removeEventListener("resize", layout);
       window.removeEventListener("load", layout);
       pane.removeEventListener("pointerdown", onDown);
-      pane.removeEventListener("pointermove", onMove);
-      pane.removeEventListener("pointerup", endDrag);
-      pane.removeEventListener("pointercancel", endDrag);
+      pane.removeEventListener("dragstart", onDragStart);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", endDrag);
+      window.removeEventListener("pointercancel", endDrag);
+      window.removeEventListener("blur", endDrag);
       pane.removeEventListener("click", onClick, true);
       pane.style.cursor = "";
       showroom.style.height = "";
