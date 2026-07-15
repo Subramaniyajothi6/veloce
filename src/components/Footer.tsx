@@ -102,6 +102,16 @@ export default function Footer() {
           <span>
             © {new Date().getFullYear()} VELOCE MOTORS GMBH — ALL RIGHTS
             RESERVED
+            {" · "}
+            DESIGNED &amp; BUILT BY{" "}
+            <a
+              className="border-b border-white/20 transition-colors duration-300 hover:text-veloce hover:border-veloce"
+              href="https://portfolio-subramaniyajothi.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              SUBRAMANIYA JOTHI
+            </a>
           </span>
           <span>
             PHOTOGRAPHY VIA{" "}
