@@ -17,6 +17,7 @@ A cinematic, single-brand **luxury car showroom** built with the Next.js App Rou
 - [Content & data model](#content--data-model)
 - [3D models](#3d-models)
 - [Image pipeline (Cloudinary)](#image-pipeline-cloudinary)
+- [SEO & share cards](#seo--share-cards)
 - [Database & scripts](#database--scripts)
 - [Admin panel & auth](#admin-panel--auth)
 - [Forms & server actions](#forms--server-actions)
@@ -92,6 +93,7 @@ Stored in `.env.local` (git-ignored). None are required to render the site; they
 | `ADMIN_PASSWORD` | `/admin` login | The single admin password. |
 | `SESSION_SECRET` | `/admin` sessions | Secret used to sign the session cookie. Admin is disabled unless **both** admin vars are set. |
 | `CLOUDINARY_UPLOAD_PRESET` | uploading new photos | Unsigned preset name (e.g. `veloce_unsigned`), used only by `tools/cloudinary-upload.mjs`. The delivery cloud name (`dc6fd4ith`) is hard-coded in the loader/upload tool. |
+| `NEXT_PUBLIC_SITE_URL` | canonical / share-card URLs | Absolute site origin (e.g. `https://veloce.example`) for `metadataBase`. Absent → Vercel's production URL, else `http://localhost:3000`. Optional; image thumbnails work regardless. |
 
 ---
 
@@ -124,7 +126,7 @@ veloce/
 │  │  ├─ car3d/        # CarCanvas, CarExperience, Configurator (3D + configurator)
 │  │  └─ cardetail/    # Highlights, EngineeringFeatures, SpecCompare, SpecGauges, ModelSubNav
 │  ├─ hooks/           # motion/effect hooks (useScramble, useHorizontalScroll, …)
-│  ├─ lib/             # db, inventory, auth, session, cloudinary-loader, motion, raf, scroll
+│  ├─ lib/             # db, inventory, auth, session, cloudinary-loader, og, motion, raf, scroll
 │  ├─ models/          # Mongoose schemas: Car, Booking, Enquiry
 │  └─ data/            # static content: cars, showroom, services, flagships, locations, stats, archive
 ├─ next.config.ts      # custom image loader + Unsplash remote pattern
@@ -220,6 +222,31 @@ node tools/cloudinary-upload.mjs veloce_unsigned
 ```
 
 The public_id is `veloce/cars/<name>` (extension dropped), giving the loader a 1:1 mapping. The `public/cars/*.jpg` source files are also committed to git so the repo remains the source of truth.
+
+---
+
+## SEO & share cards
+
+Every route emits full **OpenGraph + Twitter** metadata, so a shared link renders a **1200×630 preview card** (image + title + description) in iMessage, WhatsApp, Discord, X, Slack, Facebook, LinkedIn, etc. — not just bare text.
+
+Card image URLs are built in **`src/lib/og.ts`** (`ogImageUrl` / `ogImage`):
+
+- They are **absolute** on purpose — crawlers fetch `og:image` directly, **without** the `next/image` loader — so the helper builds the CDN URL itself, cropped to a 1200×630 **JPEG** (`f_jpg`, so no scraper ever receives a webp/avif it can't read). It handles both `/cars/*` Cloudinary heroes and `images.unsplash.com` backdrops.
+- Keep the `CLOUD` name (`dc6fd4ith`) in sync with `src/lib/cloudinary-loader.ts`.
+
+Where the cards come from:
+
+| Scope | File | Card image |
+|-------|------|-----------|
+| Site default + `/` home | `src/app/layout.tsx` (`metadataBase`, `openGraph`, `twitter`) | `DEFAULT_OG_IMAGE` — the "Feel it for yourself" deck backdrop |
+| `/models/[slug]` · `/models/[slug]/configure` | each page's `generateMetadata` | that car's own hero photo (`car.image`) |
+| `/services/[slug]` | its `generateMetadata` | `DEFAULT_OG_IMAGE` (services have no photo of their own) |
+
+`metadataBase` resolves from `NEXT_PUBLIC_SITE_URL` → else Vercel's `VERCEL_PROJECT_PRODUCTION_URL` → else `http://localhost:3000`. Set `NEXT_PUBLIC_SITE_URL` to pin a custom domain for `og:url`/canonical; the image thumbnails are absolute already, so they work either way.
+
+> **Trap:** Next.js does **not** deep-merge `openGraph`/`twitter` — a page that sets its own `openGraph` **replaces** the parent's entirely. Every per-page override must re-include `images`, or that route loses its thumbnail.
+
+To verify after deploy: paste a link into any chat, or use a validator (X Card Validator, opengraph.xyz). If a platform cached an empty preview from before, use its debugger's "scrape again" to refresh.
 
 ---
 
@@ -320,6 +347,7 @@ npm run seed    # seed all cars into MongoDB
 - **Turbopack dev image cache** is `.next/dev/cache/images` (not `.next/cache/images`); clear it + hard-refresh after replacing a same-named image.
 - **Tailwind oxide OOM** — if every route 500s with `memory allocation of 2013265920 bytes failed`, oxide tried to scan the whole project; the fix (`source(none)` + scoped `@source`) is already in `globals.css`. Keep it.
 - **3D visual checks** — use `tools/frame-check.mjs` (Playwright), not browser-extension screenshots, which stall on WebGL pages.
+- **Share cards** — `og:image` must be an **absolute** URL (crawlers don't run the `next/image` loader); build it via `src/lib/og.ts`. And `openGraph`/`twitter` are **replaced, not merged** per page, so any override must re-include `images`. See [SEO & share cards](#seo--share-cards).
 
 ---
 
