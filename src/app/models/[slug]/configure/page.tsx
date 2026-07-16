@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Configurator from "@/components/car3d/Configurator";
 import { getCar, getCars } from "@/lib/inventory";
+import { ogImage } from "@/lib/og";
 
 /* Deliberately OUTSIDE the (site) route group so it renders on the bare root
    layout — no marketing Nav/Footer over the full-screen atelier (same reason
@@ -20,9 +21,26 @@ export async function generateMetadata({
   const { slug } = await params;
   const car = await getCar(slug);
   if (!car) return {};
+  const title = `Configure the ${car.name} — VELOCE Motors`;
+  const description = `Choose a finish for the ${car.name} in the VELOCE atelier.`;
+  const image = ogImage(car.image, car.alt || car.name);
   return {
-    title: `Configure the ${car.name} — VELOCE Motors`,
-    description: `Choose a finish for the ${car.name} in the VELOCE atelier.`,
+    title,
+    description,
+    openGraph: {
+      type: "website",
+      siteName: "VELOCE Motors",
+      title,
+      description,
+      url: `/models/${car.slug}/configure`,
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
+    },
   };
 }
 

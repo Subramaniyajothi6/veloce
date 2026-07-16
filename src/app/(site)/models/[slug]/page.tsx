@@ -9,6 +9,7 @@ import Highlights from "@/components/cardetail/Highlights";
 import ModelSubNav, { type SubNavSection } from "@/components/cardetail/ModelSubNav";
 import SpecCompare from "@/components/cardetail/SpecCompare";
 import { getCar, getCars } from "@/lib/inventory";
+import { ogImage } from "@/lib/og";
 
 export async function generateStaticParams() {
   const cars = await getCars();
@@ -23,9 +24,26 @@ export async function generateMetadata({
   const { slug } = await params;
   const car = await getCar(slug);
   if (!car) return {};
+  const title = `${car.name} — VELOCE Motors`;
+  const description = `${car.tagline} ${car.category}, from ${car.price}. Explore the ${car.name} in 3D.`;
+  const image = ogImage(car.image, car.alt || car.name);
   return {
-    title: `${car.name} — VELOCE Motors`,
-    description: `${car.tagline} ${car.category}, from ${car.price}. Explore the ${car.name} in 3D.`,
+    title,
+    description,
+    openGraph: {
+      type: "website",
+      siteName: "VELOCE Motors",
+      title,
+      description,
+      url: `/models/${car.slug}`,
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
+    },
   };
 }
 

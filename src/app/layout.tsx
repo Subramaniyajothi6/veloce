@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Manrope, Space_Grotesk } from "next/font/google";
+import { DEFAULT_OG_IMAGE } from "@/lib/og";
 import "./globals.css";
 
 const anton = Anton({
@@ -21,10 +22,38 @@ const grotesk = Space_Grotesk({
   display: "swap",
 });
 
+// Absolute base for OpenGraph/canonical URLs. On Vercel this resolves to the
+// stable production domain automatically; set NEXT_PUBLIC_SITE_URL to pin a
+// custom domain. Falls back to localhost in local dev.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
+const siteTitle = "VELOCE Motors — Performance Automobiles, Curated";
+const siteDescription =
+  "VELOCE Motors sources, certifies and delivers the world's most wanted performance automobiles. Munich · Dubai · Oslo, since 1987.";
+
 export const metadata: Metadata = {
-  title: "VELOCE Motors — Performance Automobiles, Curated",
-  description:
-    "VELOCE Motors sources, certifies and delivers the world's most wanted performance automobiles. Munich · Dubai · Oslo, since 1987.",
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    siteName: "VELOCE Motors",
+    title: siteTitle,
+    description: siteDescription,
+    url: "/",
+    locale: "en_US",
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: [DEFAULT_OG_IMAGE.url],
+  },
 };
 
 export const viewport: Viewport = {

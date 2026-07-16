@@ -7,6 +7,7 @@ import ServiceEnquiryForm from "@/components/ServiceEnquiryForm";
 import { enquiryFields } from "@/data/enquiryFields";
 import { getService, services } from "@/data/services";
 import { getCars } from "@/lib/inventory";
+import { DEFAULT_OG_IMAGE } from "@/lib/og";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -20,9 +21,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = getService(slug);
   if (!service) return {};
+  const title = `${service.title} — VELOCE Motors`;
   return {
-    title: `${service.title} — VELOCE Motors`,
+    title,
     description: service.copy,
+    openGraph: {
+      type: "website",
+      siteName: "VELOCE Motors",
+      title,
+      description: service.copy,
+      url: `/services/${service.slug}`,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: service.copy,
+      images: [DEFAULT_OG_IMAGE.url],
+    },
   };
 }
 
