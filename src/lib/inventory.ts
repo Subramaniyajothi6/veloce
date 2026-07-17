@@ -28,6 +28,13 @@ interface LeanCar {
   specs?: Array<{ value: number; decimals?: number | null; unit: string; label: string; detail?: string | null }>;
   gallery?: Array<{ src?: string | null; alt?: string | null; caption?: string | null }>;
   track?: Array<{ label?: string | null; value?: string | null; note?: string | null }>;
+  highlights?: Array<{ title?: string | null; copy?: string | null; image?: string | null }>;
+  features?: Array<{
+    title?: string | null;
+    copy?: string | null;
+    image?: string | null;
+    stat?: { value?: string | null; label?: string | null } | null;
+  }>;
 }
 
 /** Code-only content keyed by slug (3D rig + editorial detail blocks), lifted
@@ -90,8 +97,25 @@ function toProfile(doc: LeanCar): CarProfile {
       value: t.value ?? "",
       note: t.note ?? "",
     })),
-    highlights: override?.highlights,
-    features: override?.features,
+    // Editorial blocks: once the admin has saved a car the field is PRESENT
+    // (an array, possibly empty) and wins — so clearing the rows genuinely hides
+    // the section. A field that was never set is `undefined` (lean skips schema
+    // defaults), and only then do we fall back to the code rig.
+    highlights: doc.highlights
+      ? doc.highlights.map((h) => ({
+          title: h.title ?? "",
+          copy: h.copy ?? "",
+          image: h.image ?? "",
+        }))
+      : override?.highlights,
+    features: doc.features
+      ? doc.features.map((f) => ({
+          title: f.title ?? "",
+          copy: f.copy ?? "",
+          image: f.image ?? "",
+          stat: f.stat ? { value: f.stat.value ?? "", label: f.stat.label ?? "" } : undefined,
+        }))
+      : override?.features,
   };
 }
 

@@ -6,7 +6,7 @@
  *
  * Activated via next.config.ts `images.loaderFile` — do not import directly.
  */
-const CLOUD = "dc6fd4ith";
+import { CLOUD } from "./cloudinary";
 
 export default function cloudinaryLoader({
   src,

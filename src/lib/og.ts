@@ -8,10 +8,10 @@
  * cropped to the 1.91:1 (1200×630) ratio every platform expects, with `f_jpg`
  * for the broadest scraper compatibility and `g_auto` to keep the car centered.
  *
- * Mirrors the delivery cloud + `veloce/cars/<name>` public_id mapping used by
- * `src/lib/cloudinary-loader.ts` — keep the CLOUD name in sync.
+ * Uses the shared delivery cloud + `veloce/cars/<name>` public_id mapping from
+ * `src/lib/cloudinary.ts`.
  */
-const CLOUD = "dc6fd4ith";
+import { CLOUD } from "./cloudinary";
 
 /** Absolute 1200×630 card URL for a "/cars/<name>.jpg" hero or an Unsplash URL. */
 export function ogImageUrl(src: string): string {

@@ -17,7 +17,7 @@ export default async function PanelLayout({
   await requireAuth();
 
   return (
-    <div className="min-h-svh bg-night text-cream">
+    <div className="admin-shell min-h-svh bg-night text-cream">
       <header className="border-b border-line sticky top-0 z-10 bg-night/90 backdrop-blur">
         <div className="wrap flex items-center justify-between gap-6 py-4 flex-wrap">
           <div className="flex items-center gap-8 flex-wrap">

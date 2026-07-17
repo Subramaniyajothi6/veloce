@@ -28,6 +28,24 @@ const TrackSchema = new Schema(
   { _id: false }
 );
 
+const HighlightSchema = new Schema(
+  { title: String, copy: String, image: String },
+  { _id: false }
+);
+
+const FeatureSchema = new Schema(
+  {
+    title: String,
+    copy: String,
+    image: String,
+    stat: {
+      type: new Schema({ value: String, label: String }, { _id: false }),
+      default: undefined,
+    },
+  },
+  { _id: false }
+);
+
 const CarSchema = new Schema(
   {
     slug: { type: String, required: true, unique: true, index: true },
@@ -45,6 +63,10 @@ const CarSchema = new Schema(
     specs: { type: [SpecSchema], default: [] },
     gallery: { type: [PhotoSchema], default: [] },
     track: { type: [TrackSchema], default: [] },
+    /** Editorial detail-page blocks — optional; code (cars.ts) provides the
+     *  fallback when these are empty (see src/lib/inventory.ts). */
+    highlights: { type: [HighlightSchema], default: [] },
+    features: { type: [FeatureSchema], default: [] },
     /** Display order on /models. */
     order: { type: Number, default: 0 },
   },

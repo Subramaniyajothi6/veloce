@@ -12,7 +12,7 @@ export default async function AdminLoginPage() {
   if (await isAuthed()) redirect("/admin");
 
   return (
-    <main className="min-h-svh grid place-items-center bg-night px-6">
+    <main className="admin-shell min-h-svh grid place-items-center bg-night px-6">
       <div className="w-full max-w-[22rem]">
         <span className="eyebrow">
           <b>VELOCE</b> Admin

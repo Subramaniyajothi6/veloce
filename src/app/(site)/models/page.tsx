@@ -67,8 +67,16 @@ export default async function ModelsPage() {
                 </span>
               </div>
               <p className="font-mono text-[0.7rem] tracking-[0.18em] uppercase text-ash mt-1">
-                {car.specs[0].value.toLocaleString("en-US")} {car.specs[0].unit}{" "}
-                · {car.specs[1].value.toFixed(car.specs[1].decimals ?? 0)} S ·
+                {car.specs[0] && (
+                  <>
+                    {car.specs[0].value.toLocaleString("en-US")} {car.specs[0].unit} ·{" "}
+                  </>
+                )}
+                {car.specs[1] && (
+                  <>
+                    {car.specs[1].value.toFixed(car.specs[1].decimals ?? 0)} S ·{" "}
+                  </>
+                )}
                 explore in 3D <b className="text-veloce">→</b>
               </p>
             </Link>

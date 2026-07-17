@@ -146,6 +146,14 @@
   html.js .atelier button:not(:disabled) { cursor: pointer; }
   html.js .atelier canvas { cursor: grab; }
   html.js .atelier canvas:active { cursor: grabbing; }
+  /* The admin panel + login also render outside the custom-cursor context, so
+     the native cursor must come back — otherwise it's invisible and controls
+     like dropdowns are impossible to click. Same pattern as .atelier above. */
+  html.js .admin-shell { cursor: auto; }
+  html.js .admin-shell a,
+  html.js .admin-shell label,
+  html.js .admin-shell select,
+  html.js .admin-shell button:not(:disabled) { cursor: pointer; }
   /* JS-dependent chrome (preloader) must not render without JS */
   html:not(.js) .js-only { display: none !important; }
 }
